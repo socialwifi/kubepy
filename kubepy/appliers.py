@@ -122,5 +122,4 @@ class UniqueDict(dict):
 def transform_container_definition(definition, options):
     new_definition = copy.deepcopy(definition)
     new_definition = definition_transformers.tag_untaged_images(new_definition, options.build_tag)
-    new_definition = options.pull_transformer(new_definition)
     return new_definition
