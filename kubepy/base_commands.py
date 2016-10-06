@@ -31,7 +31,3 @@ def add_container_options(parser):
     parser.add_option(
         '--build-tag', dest='build_tag', action='store', default='latest',
         help='used image tag and name suffix')
-    parser.add_option(
-        '--dont-pull', dest='pull_transformer', action='store_const',
-        default=lambda x: x, const=definition_transformers.dont_pull_images,
-        help='development option for using localy built images')

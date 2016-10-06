@@ -17,7 +17,7 @@ class DirectoryApplier:
         self.manager = definition_manager.DefinitionManager(path)
 
     def apply_all(self):
-        for definition in self.manager.get_definitions():
+        for definition in self.manager.get_sorted_definitions():
             UniversalDefinitionApplier(definition, self.options).apply()
 
     def apply_named(self, name):
@@ -122,5 +122,4 @@ class UniqueDict(dict):
 def transform_container_definition(definition, options):
     new_definition = copy.deepcopy(definition)
     new_definition = definition_transformers.tag_untaged_images(new_definition, options.build_tag)
-    new_definition = options.pull_transformer(new_definition)
     return new_definition
