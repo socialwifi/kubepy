@@ -17,7 +17,7 @@ class DirectoryApplier:
         self.manager = definition_manager.DefinitionManager(path)
 
     def apply_all(self):
-        for definition in self.manager.get_definitions():
+        for definition in self.manager.get_sorted_definitions():
             UniversalDefinitionApplier(definition, self.options).apply()
 
     def apply_named(self, name):

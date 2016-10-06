@@ -11,8 +11,8 @@ class DefinitionManager:
         path = self.directory / (name + '.yml')
         return self.get_yaml_from_file(path)
 
-    def get_definitions(self):
-        for path in self.directory.iterdir():
+    def get_sorted_definitions(self):
+        for path in sorted(self.directory.iterdir()):
             yield self.get_yaml_from_file(path)
 
     def get_yaml_from_file(self, path):
