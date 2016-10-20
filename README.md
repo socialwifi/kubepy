@@ -13,3 +13,4 @@ Just run `kubepy-apply-all` from a directory where all of you kubernetes definit
 Options:
 * --directory <path> - uses path instead of local directory
 * --build-tag <tag> - sets tag to all images without specified tag in your definition files
+* --replace - if present, replaces deployments instead of updating them. Default: false.
