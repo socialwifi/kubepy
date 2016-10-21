@@ -49,7 +49,10 @@ class DeploymentApplier(BaseDefinitionApplier):
     usable_with = ['Deployment']
 
     def apply(self):
-        api.apply(self.new_definition)
+        if self.options.replace:
+            api.replace(self.new_definition)
+        else:
+            api.apply(self.new_definition)
 
     @property
     def new_definition(self):

@@ -31,3 +31,6 @@ def add_container_options(parser):
     parser.add_option(
         '--build-tag', dest='build_tag', action='store', default='latest',
         help='used image tag and name suffix')
+    parser.add_option(
+        '--replace', dest='replace', action='store_true', default=False,
+        help='delete and recreate deployments instead of doing rolling update')
