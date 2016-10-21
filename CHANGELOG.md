@@ -1,10 +1,10 @@
 Changelog for kubepy
 =================
 
-1.2.0 (unreleased)
-----------------
+1.2.0 (2016-10-21)
+------------------
 
-- Nothing changed yet.
+- Allow to replace deployments instead of updating them.
 
 1.1 (2016-10-06)
 ----------------
