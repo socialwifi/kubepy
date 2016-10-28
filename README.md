@@ -2,6 +2,7 @@
 
 [![Latest Version](https://img.shields.io/pypi/v/kubepy.svg)](https://github.com/socialwifi/kubepy/blob/master/CHANGELOG.md)
 [![Supported Python versions](https://img.shields.io/pypi/pyversions/kubepy.svg)](https://pypi.python.org/pypi/kubepy/)
+[![Wheel Status](https://img.shields.io/pypi/wheel/kubepy.svg)](https://pypi.python.org/pypi/kubepy/)
 [![License](https://img.shields.io/pypi/l/kubepy.svg)](https://github.com/socialwifi/kubepy/blob/master/LICENSE)
 
 Python wrapper on kubectl that makes deploying easy.
