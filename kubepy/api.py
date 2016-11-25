@@ -47,8 +47,9 @@ def delete(kind, name):
 
 
 def run_command_with_yaml_on_stdin(command, definition):
-    create_process = subprocess.Popen(command, stdin=subprocess.PIPE, stderr=sys.stderr)
+    create_process = subprocess.Popen(command, stdin=subprocess.PIPE, stderr=subprocess.PIPE)
     create_process.communicate(yaml.dump(definition).encode())
     create_process.stdin.close()
     if create_process.wait() != 0:
-        raise ApiError()
+        message = create_process.stderr.read().decode()
+        raise ApiError(message)
