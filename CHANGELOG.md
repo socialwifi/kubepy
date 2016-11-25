@@ -1,10 +1,10 @@
 Changelog for kubepy
 =================
 
-1.2.1 (unreleased)
+1.3.0 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Handle exceeded deadline in job applier.
 
 
 1.2.0 (2016-10-21)

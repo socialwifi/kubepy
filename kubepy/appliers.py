@@ -11,6 +11,14 @@ class InstallError(Exception):
     pass
 
 
+class JobError(InstallError):
+    pass
+
+
+class DeadlineExceeded(JobError):
+    pass
+
+
 class DirectoryApplier:
     def __init__(self, path, options):
         self.options = options
@@ -69,10 +77,20 @@ class JobApplier(BaseDefinitionApplier):
                 status = api.get('job', [('app', self.app)])['items'][0]['status']
                 if 'completionTime' in status:
                     break
+                elif 'conditions' in status:
+                    condition = status['conditions'][0]
+                    if condition['type'] == 'Failed':
+                        self._handle_failed_condition(condition)
                 else:
                     time.sleep(1)
         finally:
             api.delete('job', self.name)
+
+    def _handle_failed_condition(self, condition):
+        if condition['reason'] == 'DeadlineExceeded':
+            raise DeadlineExceeded(condition['message'])
+        else:
+            raise JobError(condition['message'])
 
     @property
     def new_definition(self):
