@@ -67,30 +67,22 @@ class DeploymentApplier(BaseDefinitionApplier):
         return transform_container_definition(self.definition, self.options)
 
 
-class JobApplier(BaseDefinitionApplier):
-    usable_with = ['Job']
-
+class BaseJobApplier(BaseDefinitionApplier):
     def apply(self):
         api.create(self.new_definition)
         try:
             while True:
-                status = api.get('job', [('app', self.app)])['items'][0]['status']
-                if 'completionTime' in status:
+                status = self._get_status()
+                status.raise_if_failed()
+                if status.succeeded:
                     break
-                elif 'conditions' in status:
-                    condition = status['conditions'][0]
-                    if condition['type'] == 'Failed':
-                        self._handle_failed_condition(condition)
                 else:
                     time.sleep(1)
         finally:
-            api.delete('job', self.name)
+            api.delete(self.definition_type, self.name)
 
-    def _handle_failed_condition(self, condition):
-        if condition['reason'] == 'DeadlineExceeded':
-            raise DeadlineExceeded(condition['message'])
-        else:
-            raise JobError(condition['message'])
+    def _get_status(self):
+        return self.status_class(api.get(self.definition_type, [('app', self.app)])['items'][0]['status'])
 
     @property
     def new_definition(self):
@@ -104,9 +96,86 @@ class JobApplier(BaseDefinitionApplier):
     def app(self):
         return self.definition['metadata']['labels']['app']
 
+    @property
+    def status_class(self):
+        raise NotImplementedError
+
+    @property
+    def definition_type(self):
+        raise NotImplementedError
+
+
+class BaseJobStatus:
+    def __init__(self, status):
+        self.status = status
+
+    def raise_if_failed(self):
+        raise NotImplementedError
+
+    def succeeded(self):
+        raise NotImplementedError
+
+
+class JobStatus(BaseJobStatus):
+    def raise_if_failed(self):
+        if 'conditions' in self.status:
+            condition = self.status['conditions'][0]
+            if condition['type'] == 'Failed':
+                self._raise_for_failed_condition(condition)
+
+    def _raise_for_failed_condition(self, condition):
+        if condition['reason'] == 'DeadlineExceeded':
+            raise DeadlineExceeded(condition['message'])
+        else:
+            raise JobError(condition['message'])
+
+    @property
+    def succeeded(self):
+        return 'completionTime' in self.status
+
+
+class PodStatus(BaseJobStatus):
+    def raise_if_failed(self):
+        for state in self.container_states:
+            if 'terminated' in state:
+                if state['terminated']['reason'] != 'Completed':
+                    raise JobError(state['terminated']['reason'])
+
+    @property
+    def succeeded(self):
+        for state in self.container_states:
+            terminated = 'terminated' in state
+            completed = terminated and state['terminated']['reason'] == 'Completed'
+            if not completed:
+                return False
+        else:
+            return True
+
+    @property
+    def container_states(self):
+        for container_status in self.status['containerStatuses']:
+            yield container_status['state']
+
+
+class JobApplier(BaseJobApplier):
+    definition_type = 'Job'
+    usable_with = [definition_type]
+    status_class = JobStatus
+
+
+class PodApplier(BaseJobApplier):
+    definition_type = 'Pod'
+    usable_with = [definition_type]
+    status_class = PodStatus
+
+    def apply(self):
+        if self.definition['spec']['restartPolicy'] != 'Never':
+            raise JobError('Pod has to have restartPolicy = Never')
+        super().apply()
+
 
 class UniversalDefinitionApplier(BaseDefinitionApplier):
-    applier_classes = (ResourceApplier, DeploymentApplier, JobApplier)
+    applier_classes = (ResourceApplier, DeploymentApplier, JobApplier, PodApplier)
     usable_with = sum((applier.usable_with for applier in applier_classes), [])
 
     def apply(self):
