@@ -1,7 +1,7 @@
 Changelog for kubepy
 =================
 
-1.4.0 (unreleased)
+1.4.0 (2016-12-07)
 ------------------
 
 - Add pod as one time job support.
