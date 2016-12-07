@@ -8,17 +8,28 @@ class ApiError(Exception):
     pass
 
 
-def get(kind, selector=()):
-    selector_query = sum(
-        (['-l', '{}={}'.format(key, value)] for key, value in selector),
-        [])
+def get(kind, name=None):
+    command = ['kubectl', 'get', '-o', 'yaml', kind]
+    if name:
+        command.append(name)
     get_process = subprocess.Popen(
-        ['kubectl', 'get', kind, *selector_query, '-o', 'yaml'],
-        stdout=subprocess.PIPE, stderr=sys.stderr)
+        command, stdout=subprocess.PIPE, stderr=sys.stderr)
     objects = yaml.load(get_process.stdout)
     if get_process.wait() != 0:
         raise ApiError
     return objects
+
+
+def logs(pod_name, container_name=None):
+    command = ['kubectl', 'logs', pod_name]
+    if container_name:
+        command += ['-c', container_name]
+    log_process = subprocess.Popen(
+        command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    stdout, stderr = log_process.communicate()
+    if log_process.returncode != 0:
+        raise ApiError
+    return stdout, stderr
 
 
 def create(definition):
@@ -48,8 +59,7 @@ def delete(kind, name):
 
 def run_command_with_yaml_on_stdin(command, definition):
     create_process = subprocess.Popen(command, stdin=subprocess.PIPE, stderr=subprocess.PIPE)
-    create_process.communicate(yaml.dump(definition).encode())
+    stdout, stderr = create_process.communicate(yaml.dump(definition).encode())
     create_process.stdin.close()
     if create_process.wait() != 0:
-        message = create_process.stderr.read().decode()
-        raise ApiError(message)
+        raise ApiError(stderr)

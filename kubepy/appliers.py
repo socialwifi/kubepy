@@ -2,6 +2,8 @@ import copy
 
 import time
 
+import collections
+
 from kubepy import api
 from kubepy import definition_manager
 from kubepy import definition_transformers
@@ -13,6 +15,14 @@ class InstallError(Exception):
 
 class JobError(InstallError):
     pass
+
+
+class PodError(JobError):
+    def __init__(self, message='', container_name='', stdout='', stderr=''):
+        self.container_name = container_name
+        self.stdout = stdout
+        self.stderr = stderr
+        super().__init__(message, container_name, stdout, stderr)
 
 
 class DeadlineExceeded(JobError):
@@ -67,30 +77,23 @@ class DeploymentApplier(BaseDefinitionApplier):
         return transform_container_definition(self.definition, self.options)
 
 
-class JobApplier(BaseDefinitionApplier):
-    usable_with = ['Job']
-
+class BaseJobApplier(BaseDefinitionApplier):
     def apply(self):
         api.create(self.new_definition)
         try:
             while True:
-                status = api.get('job', [('app', self.app)])['items'][0]['status']
-                if 'completionTime' in status:
+                status = self._get_status()
+                status.raise_if_failed()
+                if status.succeeded:
                     break
-                elif 'conditions' in status:
-                    condition = status['conditions'][0]
-                    if condition['type'] == 'Failed':
-                        self._handle_failed_condition(condition)
                 else:
                     time.sleep(1)
         finally:
-            api.delete('job', self.name)
+            api.delete(self.definition_type, self.name)
 
-    def _handle_failed_condition(self, condition):
-        if condition['reason'] == 'DeadlineExceeded':
-            raise DeadlineExceeded(condition['message'])
-        else:
-            raise JobError(condition['message'])
+    def _get_status(self):
+        return self.status_class(self.name, api.get(self.definition_type, self.name)['status'])
+
 
     @property
     def new_definition(self):
@@ -101,12 +104,94 @@ class JobApplier(BaseDefinitionApplier):
         return self.definition['metadata']['name']
 
     @property
-    def app(self):
-        return self.definition['metadata']['labels']['app']
+    def status_class(self):
+        raise NotImplementedError
+
+    @property
+    def definition_type(self):
+        raise NotImplementedError
+
+
+class BaseJobStatus:
+    def __init__(self, definition_name, status):
+        self.definition_name = definition_name
+        self.status = status
+
+    def raise_if_failed(self):
+        raise NotImplementedError
+
+    def succeeded(self):
+        raise NotImplementedError
+
+
+class JobStatus(BaseJobStatus):
+    def raise_if_failed(self):
+        if 'conditions' in self.status:
+            condition = self.status['conditions'][0]
+            if condition['type'] == 'Failed':
+                self._raise_for_failed_condition(condition)
+
+    def _raise_for_failed_condition(self, condition):
+        if condition['reason'] == 'DeadlineExceeded':
+            raise DeadlineExceeded(condition['message'])
+        else:
+            raise JobError(condition['message'])
+
+    @property
+    def succeeded(self):
+        return 'completionTime' in self.status
+
+
+ContainerInfo = collections.namedtuple('ContainerInfo',['name', 'state'])
+
+
+class PodStatus(BaseJobStatus):
+    def raise_if_failed(self):
+        for container in self.containers:
+            if 'terminated' in container.state:
+                if container.state['terminated']['reason'] != 'Completed':
+                    self.raise_with_log(container.name)
+
+
+    @property
+    def succeeded(self):
+        for container in self.containers:
+            terminated = 'terminated' in container.state
+            completed = terminated and container.state['terminated']['reason'] == 'Completed'
+            if not completed:
+                return False
+        else:
+            return True
+
+    @property
+    def containers(self):
+        for container_status in self.status['containerStatuses']:
+            yield ContainerInfo(container_status['name'], container_status['state'])
+
+    def raise_with_log(self, container_name):
+        stdout, stderr = api.logs(self.definition_name, container_name)
+        raise PodError('Failure in {}'.format(container_name), container_name, stdout, stderr)
+
+
+class JobApplier(BaseJobApplier):
+    definition_type = 'Job'
+    usable_with = [definition_type]
+    status_class = JobStatus
+
+
+class PodApplier(BaseJobApplier):
+    definition_type = 'Pod'
+    usable_with = [definition_type]
+    status_class = PodStatus
+
+    def apply(self):
+        if self.definition['spec']['restartPolicy'] != 'Never':
+            raise JobError('Pod has to have restartPolicy = Never')
+        super().apply()
 
 
 class UniversalDefinitionApplier(BaseDefinitionApplier):
-    applier_classes = (ResourceApplier, DeploymentApplier, JobApplier)
+    applier_classes = (ResourceApplier, DeploymentApplier, JobApplier, PodApplier)
     usable_with = sum((applier.usable_with for applier in applier_classes), [])
 
     def apply(self):
