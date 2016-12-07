@@ -2,6 +2,8 @@ import copy
 
 import time
 
+import collections
+
 from kubepy import api
 from kubepy import definition_manager
 from kubepy import definition_transformers
@@ -13,6 +15,14 @@ class InstallError(Exception):
 
 class JobError(InstallError):
     pass
+
+
+class PodError(JobError):
+    def __init__(self, message='', container_name='', stdout='', stderr=''):
+        self.container_name = container_name
+        self.stdout = stdout
+        self.stderr = stderr
+        super().__init__(message, container_name, stdout, stderr)
 
 
 class DeadlineExceeded(JobError):
@@ -82,7 +92,7 @@ class BaseJobApplier(BaseDefinitionApplier):
             api.delete(self.definition_type, self.name)
 
     def _get_status(self):
-        return self.status_class(api.get(self.definition_type, self.name)['status'])
+        return self.status_class(self.name, api.get(self.definition_type, self.name)['status'])
 
 
     @property
@@ -103,7 +113,8 @@ class BaseJobApplier(BaseDefinitionApplier):
 
 
 class BaseJobStatus:
-    def __init__(self, status):
+    def __init__(self, definition_name, status):
+        self.definition_name = definition_name
         self.status = status
 
     def raise_if_failed(self):
@@ -131,27 +142,35 @@ class JobStatus(BaseJobStatus):
         return 'completionTime' in self.status
 
 
+ContainerInfo = collections.namedtuple('ContainerInfo',['name', 'state'])
+
+
 class PodStatus(BaseJobStatus):
     def raise_if_failed(self):
-        for state in self.container_states:
-            if 'terminated' in state:
-                if state['terminated']['reason'] != 'Completed':
-                    raise JobError(state['terminated']['reason'])
+        for container in self.containers:
+            if 'terminated' in container.state:
+                if container.state['terminated']['reason'] != 'Completed':
+                    self.raise_with_log(container.name)
+
 
     @property
     def succeeded(self):
-        for state in self.container_states:
-            terminated = 'terminated' in state
-            completed = terminated and state['terminated']['reason'] == 'Completed'
+        for container in self.containers:
+            terminated = 'terminated' in container.state
+            completed = terminated and container.state['terminated']['reason'] == 'Completed'
             if not completed:
                 return False
         else:
             return True
 
     @property
-    def container_states(self):
+    def containers(self):
         for container_status in self.status['containerStatuses']:
-            yield container_status['state']
+            yield ContainerInfo(container_status['name'], container_status['state'])
+
+    def raise_with_log(self, container_name):
+        stdout, stderr = api.logs(self.definition_name, container_name)
+        raise PodError('Failure in {}'.format(container_name), container_name, stdout, stderr)
 
 
 class JobApplier(BaseJobApplier):

@@ -20,6 +20,18 @@ def get(kind, name=None):
     return objects
 
 
+def logs(pod_name, container_name=None):
+    command = ['kubectl', 'logs', pod_name]
+    if container_name:
+        command += ['-c', container_name]
+    log_process = subprocess.Popen(
+        command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    stdout, stderr = log_process.communicate()
+    if log_process.returncode != 0:
+        raise ApiError
+    return stdout, stderr
+
+
 def create(definition):
     run_command_with_yaml_on_stdin(
         ['kubectl', 'create', '-f', '-'], definition)
