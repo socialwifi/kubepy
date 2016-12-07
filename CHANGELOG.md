@@ -5,6 +5,7 @@ Changelog for kubepy
 ------------------
 
 - Add pod as one time job support.
+- Don't require app label in jobs.
 
 
 1.3.0 (2016-11-25)

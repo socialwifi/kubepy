@@ -82,7 +82,8 @@ class BaseJobApplier(BaseDefinitionApplier):
             api.delete(self.definition_type, self.name)
 
     def _get_status(self):
-        return self.status_class(api.get(self.definition_type, [('app', self.app)])['items'][0]['status'])
+        return self.status_class(api.get(self.definition_type, self.name)['status'])
+
 
     @property
     def new_definition(self):
@@ -91,10 +92,6 @@ class BaseJobApplier(BaseDefinitionApplier):
     @property
     def name(self):
         return self.definition['metadata']['name']
-
-    @property
-    def app(self):
-        return self.definition['metadata']['labels']['app']
 
     @property
     def status_class(self):

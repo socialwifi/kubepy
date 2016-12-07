@@ -8,13 +8,12 @@ class ApiError(Exception):
     pass
 
 
-def get(kind, selector=()):
-    selector_query = sum(
-        (['-l', '{}={}'.format(key, value)] for key, value in selector),
-        [])
+def get(kind, name=None):
+    command = ['kubectl', 'get', '-o', 'yaml', kind]
+    if name:
+        command.append(name)
     get_process = subprocess.Popen(
-        ['kubectl', 'get', kind, *selector_query, '-o', 'yaml'],
-        stdout=subprocess.PIPE, stderr=sys.stderr)
+        command, stdout=subprocess.PIPE, stderr=sys.stderr)
     objects = yaml.load(get_process.stdout)
     if get_process.wait() != 0:
         raise ApiError
