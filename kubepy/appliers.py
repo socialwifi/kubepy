@@ -32,9 +32,15 @@ class DeadlineExceeded(JobError):
 def directory_applier(path, options):
     manager = definition_manager.DefinitionManager(path)
     return DefinitionsApplier(manager, options)
-
-
 DirectoryApplier = directory_applier
+
+
+def directories_applier(paths, options):
+    manager = definition_manager.OverridenDefinitionManager(
+        *(definition_manager.DefinitionManager(path) for path in paths)
+    )
+    return DefinitionsApplier(manager, options)
+DirectoriesApplier = directories_applier
 
 
 class DefinitionsApplier:
