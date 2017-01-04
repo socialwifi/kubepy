@@ -43,11 +43,11 @@ class DefinitionsApplier:
         self.manager = manager
 
     def apply_all(self):
-        for definition in self.manager.get_sorted_definitions():
+        for definition in self.manager.values():
             UniversalDefinitionApplier(definition, self.options).apply()
 
     def apply_named(self, name):
-        definition = self.manager.get_definition(name)
+        definition = self.manager[name]
         UniversalDefinitionApplier(definition, self.options).apply()
 
 
