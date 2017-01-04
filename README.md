@@ -17,6 +17,8 @@ Supported kinds are deployment, service, secret and job.
 Just run `kubepy-apply-all` from a directory where all of you kubernetes definition yml files are.
 
 Options:
-* --directory <path> - uses path instead of local directory
+* --directory <path> - uses path instead of local directory.
+  Can be used multiple times to add new and partialy override existing definitions.
 * --build-tag <tag> - sets tag to all images without specified tag in your definition files
 * --replace - if present, replaces deployments instead of updating them. Default: false.
+* --host-volume <name>=<path> Adds host volume to each pod definition. Can be used multiple times.
