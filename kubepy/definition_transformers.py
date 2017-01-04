@@ -9,32 +9,37 @@ def tag_untaged_images(definition, tag):
 
 
 def iterate_container_definitions(new_definition):
-    crawler_class_map = {
-        'Job': DefinitionWithPodTemplateCrawler,
-        'Deployment': DefinitionWithPodTemplateCrawler,
-        'Pod': PodCrawler,
-    }
-    crawler = crawler_class_map[new_definition['kind']](new_definition)
-    return crawler.iterate_container_definitions()
+    return get_crawler(new_definition).get_container_definitions()
+
+
+def get_crawler(definition):
+    return CRAWLER_CLASS_MAP[definition['kind']](definition)
 
 
 class BaseCrawler:
     def __init__(self, definition):
         self.definition = definition
 
-    def iterate_container_definitions(self):
+    def get_container_definitions(self):
+        return self.get_pod_spec()['containers']
+
+    def get_pod_spec(self):
         raise NotImplementedError
 
 
 class DefinitionWithPodTemplateCrawler(BaseCrawler):
-    def iterate_container_definitions(self):
-        pod_crawler = PodCrawler(self.definition['spec']['template'])
-        yield from pod_crawler.iterate_container_definitions()
+    def get_pod_spec(self):
+        return self.get_pod_crawler().get_pod_spec()
+
+    def get_pod_crawler(self):
+        return PodCrawler(self.definition['spec']['template'])
 
 
 class PodCrawler(BaseCrawler):
-    def iterate_container_definitions(self):
-        yield from self.definition['spec']['containers']
+
+
+    def get_pod_spec(self):
+        return self.definition['spec']
 
 
 def tag_untaged_image(image, tag):
@@ -42,3 +47,10 @@ def tag_untaged_image(image, tag):
         return image
     else:
         return image + ':' + tag
+
+
+CRAWLER_CLASS_MAP = {
+    'Job': DefinitionWithPodTemplateCrawler,
+    'Deployment': DefinitionWithPodTemplateCrawler,
+    'Pod': PodCrawler,
+}
