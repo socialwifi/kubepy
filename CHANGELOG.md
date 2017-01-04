@@ -1,10 +1,11 @@
 Changelog for kubepy
 =================
 
-1.4.1 (unreleased)
+1.5.0 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Allowed --directory <path> to be used multiple times to override definitions.
+- Added --host-volume <name>=<path> to add host volume to pod definitions.
 
 
 1.4.0 (2016-12-07)
