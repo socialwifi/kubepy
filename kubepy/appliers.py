@@ -88,7 +88,7 @@ class DeploymentApplier(BaseDefinitionApplier):
 
     @property
     def new_definition(self):
-        return transform_container_definition(self.definition, self.options)
+        return transform_pod_definition(self.definition, self.options)
 
 
 class BaseJobApplier(BaseDefinitionApplier):
@@ -111,7 +111,7 @@ class BaseJobApplier(BaseDefinitionApplier):
 
     @property
     def new_definition(self):
-        return transform_container_definition(self.definition, self.options)
+        return transform_pod_definition(self.definition, self.options)
 
     @property
     def name(self):
@@ -239,7 +239,8 @@ class UniqueDict(dict):
             raise UniqueDictException(key)
 
 
-def transform_container_definition(definition, options):
+def transform_pod_definition(definition, options):
     new_definition = copy.deepcopy(definition)
     new_definition = definition_transformers.tag_untaged_images(new_definition, options.build_tag)
+    new_definition = definition_transformers.add_host_volumes(new_definition, options.host_volumes)
     return new_definition

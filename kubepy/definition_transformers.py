@@ -12,6 +12,14 @@ def iterate_container_definitions(new_definition):
     return get_crawler(new_definition).get_container_definitions()
 
 
+def add_host_volumes(definition, host_volumes):
+    new_definition = copy.deepcopy(definition)
+    for name, path in host_volumes.items():
+        volumes = get_crawler(new_definition).get_volume_definitions()
+        volumes.append({'name': name, 'hostPath': {'path': str(path)}})
+    return new_definition
+
+
 def get_crawler(definition):
     return CRAWLER_CLASS_MAP[definition['kind']](definition)
 
@@ -22,6 +30,9 @@ class BaseCrawler:
 
     def get_container_definitions(self):
         return self.get_pod_spec()['containers']
+
+    def get_volume_definitions(self):
+        return self.get_pod_spec().setdefault('volumes', [])
 
     def get_pod_spec(self):
         raise NotImplementedError
