@@ -29,10 +29,18 @@ class DeadlineExceeded(JobError):
     pass
 
 
-class DirectoryApplier:
-    def __init__(self, path, options):
+def directory_applier(path, options):
+    manager = definition_manager.DefinitionManager(path)
+    return DefinitionsApplier(manager, options)
+
+
+DirectoryApplier = directory_applier
+
+
+class DefinitionsApplier:
+    def __init__(self, manager, options):
         self.options = options
-        self.manager = definition_manager.DefinitionManager(path)
+        self.manager = manager
 
     def apply_all(self):
         for definition in self.manager.get_sorted_definitions():
