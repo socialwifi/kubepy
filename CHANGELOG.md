@@ -1,7 +1,7 @@
 Changelog for kubepy
 =================
 
-1.5.0 (unreleased)
+1.5.0 (2017-01-13)
 ------------------
 
 - Allowed --directory <path> to be used multiple times to override definitions.
