@@ -29,17 +29,31 @@ class DeadlineExceeded(JobError):
     pass
 
 
-class DirectoryApplier:
-    def __init__(self, path, options):
+def directory_applier(path, options):
+    manager = definition_manager.DefinitionManager(path)
+    return DefinitionsApplier(manager, options)
+DirectoryApplier = directory_applier
+
+
+def directories_applier(paths, options):
+    manager = definition_manager.OverridenDefinitionManager(
+        *(definition_manager.DefinitionManager(path) for path in paths)
+    )
+    return DefinitionsApplier(manager, options)
+DirectoriesApplier = directories_applier
+
+
+class DefinitionsApplier:
+    def __init__(self, manager, options):
         self.options = options
-        self.manager = definition_manager.DefinitionManager(path)
+        self.manager = manager
 
     def apply_all(self):
-        for definition in self.manager.get_sorted_definitions():
+        for definition in self.manager.values():
             UniversalDefinitionApplier(definition, self.options).apply()
 
     def apply_named(self, name):
-        definition = self.manager.get_definition(name)
+        definition = self.manager[name]
         UniversalDefinitionApplier(definition, self.options).apply()
 
 
@@ -74,7 +88,7 @@ class DeploymentApplier(BaseDefinitionApplier):
 
     @property
     def new_definition(self):
-        return transform_container_definition(self.definition, self.options)
+        return transform_pod_definition(self.definition, self.options)
 
 
 class BaseJobApplier(BaseDefinitionApplier):
@@ -97,7 +111,7 @@ class BaseJobApplier(BaseDefinitionApplier):
 
     @property
     def new_definition(self):
-        return transform_container_definition(self.definition, self.options)
+        return transform_pod_definition(self.definition, self.options)
 
     @property
     def name(self):
@@ -225,7 +239,8 @@ class UniqueDict(dict):
             raise UniqueDictException(key)
 
 
-def transform_container_definition(definition, options):
+def transform_pod_definition(definition, options):
     new_definition = copy.deepcopy(definition)
     new_definition = definition_transformers.tag_untaged_images(new_definition, options.build_tag)
+    new_definition = definition_transformers.add_host_volumes(new_definition, options.host_volumes)
     return new_definition

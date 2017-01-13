@@ -34,3 +34,12 @@ def add_container_options(parser):
     parser.add_option(
         '--replace', dest='replace', action='store_true', default=False,
         help='delete and recreate deployments instead of doing rolling update')
+    parser.add_option(
+        '--host-volume', dest='host_volumes', default={}, action='callback', type='string',
+        callback=parse_host_volume_options_callback,
+        help='add host volume to pods. Format is name=path  (--host-volume=dev-volume=/home')
+
+
+def parse_host_volume_options_callback(option, opt_str, value, parser):
+    name, path = value.split('=', 1)
+    getattr(parser.values, option.dest)[name] = path
