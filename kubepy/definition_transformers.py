@@ -63,5 +63,6 @@ def tag_untaged_image(image, tag):
 CRAWLER_CLASS_MAP = {
     'Job': DefinitionWithPodTemplateCrawler,
     'Deployment': DefinitionWithPodTemplateCrawler,
+    'StatefulSet': DefinitionWithPodTemplateCrawler,
     'Pod': PodCrawler,
 }

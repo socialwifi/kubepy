@@ -71,14 +71,15 @@ class BaseDefinitionApplier:
 
 
 class ResourceApplier(BaseDefinitionApplier):
-    usable_with = ['Service', 'Secret']
+    usable_with = ['Service', 'Secret', 'StorageClass', 'PersistentVolume',
+                   'PersistentVolumeClaim']
 
     def apply(self):
         api.apply(self.definition)
 
 
-class DeploymentApplier(BaseDefinitionApplier):
-    usable_with = ['Deployment']
+class ReplicatedTemplateResourceApplier(BaseDefinitionApplier):
+    usable_with = ['Deployment', 'StatefulSet']
 
     def apply(self):
         if self.options.replace:
@@ -205,7 +206,7 @@ class PodApplier(BaseJobApplier):
 
 
 class UniversalDefinitionApplier(BaseDefinitionApplier):
-    applier_classes = (ResourceApplier, DeploymentApplier, JobApplier, PodApplier)
+    applier_classes = (ResourceApplier, ReplicatedTemplateResourceApplier, JobApplier, PodApplier)
     usable_with = sum((applier.usable_with for applier in applier_classes), [])
 
     def apply(self):
