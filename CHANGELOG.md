@@ -4,7 +4,7 @@ Changelog for kubepy
 1.5.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Added support for StatefulSet, StorageClass, PersistentVolume and PersistentVolumeClaim
 
 
 1.5.0 (2017-01-13)
@@ -12,7 +12,6 @@ Changelog for kubepy
 
 - Allowed --directory <path> to be used multiple times to override definitions.
 - Added --host-volume <name>=<path> to add host volume to pod definitions.
-- Added support for StatefulSet, StorageClass, PersistentVolume and PersistentVolumeClaim
 
 
 1.4.0 (2016-12-07)
