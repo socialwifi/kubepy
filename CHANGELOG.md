@@ -1,7 +1,7 @@
 Changelog for kubepy
 =================
 
-1.5.1 (unreleased)
+1.5.1 (2017-01-26)
 ------------------
 
 - Added support for StatefulSet, StorageClass, PersistentVolume and PersistentVolumeClaim
