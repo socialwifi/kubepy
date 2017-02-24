@@ -4,7 +4,7 @@ Changelog for kubepy
 1.5.2 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Added --show-definition option to apply one for easier debugging.
 
 
 1.5.1 (2017-01-26)
