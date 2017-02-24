@@ -23,3 +23,4 @@ Options:
 * --build-tag <tag> - sets tag to all images without specified tag in your definition files
 * --replace - if present, replaces deployments instead of updating them. Default: false.
 * --host-volume <name>=<path> Adds host volume to each pod definition. Can be used multiple times.
+* --env <VAR>=value Sets environment vatiable on every container.

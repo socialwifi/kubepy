@@ -5,6 +5,7 @@ Changelog for kubepy
 ------------------
 
 - Added --show-definition option to apply one for easier debugging.
+- Added --env option to set environment variables on every container.
 
 
 1.5.1 (2017-01-26)
