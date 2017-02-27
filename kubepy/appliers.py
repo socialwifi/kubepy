@@ -56,6 +56,10 @@ class DefinitionsApplier:
         definition = self.manager[name]
         UniversalDefinitionApplier(definition, self.options).apply()
 
+    def get_named_definition(self, name):
+        definition = self.manager[name]
+        return UniversalDefinitionApplier(definition, self.options).new_definition
+
 
 class BaseDefinitionApplier:
     def __init__(self, definition, options):
@@ -67,6 +71,10 @@ class BaseDefinitionApplier:
 
     @property
     def usable_with(self):
+        raise NotImplementedError
+
+    @property
+    def new_definition(self):
         raise NotImplementedError
 
 
@@ -210,14 +218,7 @@ class UniversalDefinitionApplier(BaseDefinitionApplier):
     usable_with = sum((applier.usable_with for applier in applier_classes), [])
 
     def apply(self):
-        kind = self.definition['kind']
-        try:
-            applier_class = self.kind_map[kind]
-        except KeyError:
-            raise InstallError('Unknown resource kind: {}'.format(kind))
-        else:
-            applier = applier_class(self.definition, self.options)
-            applier.apply()
+        self.get_applier().apply()
 
     @property
     def kind_map(self):
@@ -226,6 +227,21 @@ class UniversalDefinitionApplier(BaseDefinitionApplier):
             for kind in applier_class.usable_with:
                 kind_map[kind] = applier_class
         return dict(kind_map)
+
+    @property
+    def new_definition(self):
+        return self.get_applier().new_definition
+
+    def get_applier(self):
+        kind = self.definition['kind']
+        try:
+            applier_class = self.kind_map[kind]
+        except KeyError:
+            raise InstallError('Unknown resource kind: {}'.format(kind))
+        else:
+            return applier_class(self.definition, self.options)
+
+
 
 
 class UniqueDictException(Exception):
@@ -243,5 +259,6 @@ class UniqueDict(dict):
 def transform_pod_definition(definition, options):
     new_definition = copy.deepcopy(definition)
     new_definition = definition_transformers.tag_untaged_images(new_definition, options.build_tag)
+    new_definition = definition_transformers.set_environment(new_definition, options.environment)
     new_definition = definition_transformers.add_host_volumes(new_definition, options.host_volumes)
     return new_definition

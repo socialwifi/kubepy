@@ -2,6 +2,7 @@
 
 import optparse
 import pathlib
+import yaml
 
 from kubepy import appliers
 from kubepy import base_commands
@@ -20,6 +21,9 @@ class ApplyOneCommand(base_commands.BaseCommand):
         parser.add_option(
             '--directory', dest='directories', action='append',
             help='installs definitions from this directory, can be defined multiple times to override definitions.')
+        parser.add_option(
+            '--show-definition', dest='show_definition', action='store_true', default=False,
+            help='shows definition instead of applying them.')
         base_commands.add_container_options(parser)
         return parser
 
@@ -29,7 +33,10 @@ class ApplyOneCommand(base_commands.BaseCommand):
         runner = appliers.DirectoriesApplier(directories, options)
         if args:
             for job_name in args:
-                runner.apply_named(job_name)
+                if options.show_definition:
+                    print(yaml.dump(runner.get_named_definition(job_name)))
+                else:
+                    runner.apply_named(job_name)
         else:
             raise base_commands.CommandError('Provide definition names.')
 

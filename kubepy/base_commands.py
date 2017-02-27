@@ -36,10 +36,14 @@ def add_container_options(parser):
         help='delete and recreate deployments instead of doing rolling update')
     parser.add_option(
         '--host-volume', dest='host_volumes', default={}, action='callback', type='string',
-        callback=parse_host_volume_options_callback,
+        callback=parse_dict_options_callback,
         help='add host volume to pods. Format is name=path  (--host-volume=dev-volume=/home')
+    parser.add_option(
+        '--env', dest='environment', default={}, action='callback', type='string',
+        callback=parse_dict_options_callback,
+        help='add environment variable to containers. Format is VAR=value  (--env=BUILD_NUMBER=2')
 
 
-def parse_host_volume_options_callback(option, opt_str, value, parser):
+def parse_dict_options_callback(option, opt_str, value, parser):
     name, path = value.split('=', 1)
     getattr(parser.values, option.dest)[name] = path

@@ -8,6 +8,19 @@ def tag_untaged_images(definition, tag):
     return new_definition
 
 
+def set_environment(definition, new_environment):
+    new_definition = copy.deepcopy(definition)
+    for container in iterate_container_definitions(new_definition):
+        env_definition = container.get('env', [])
+        env_definition = [
+            env for env in env_definition if env['name'] not in new_environment.keys()
+        ]
+        for name, value in new_environment.items():
+            env_definition.append({'name': name, 'value': value})
+        container['env'] = env_definition
+    return new_definition
+
+
 def iterate_container_definitions(new_definition):
     return get_crawler(new_definition).get_container_definitions()
 
