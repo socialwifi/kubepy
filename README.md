@@ -29,3 +29,10 @@ There is also `kubepy-apply-one` command which is called as `kubepy-apply-one na
 It applies only files selected files. Names should be without ".yml".
 It accepts all options from `kubepy-apply-all`. Additionaly you can pass option:
 * `--show-definition` - shows definition instead of applying them.
+
+## Applying jobs.
+Applying usualy means that underlying `kubectl apply` or `kubectl replace` is called. However applying job is treated differently.
+To ensure that job finished and succeeded kubectl waits for job to finish and fails if job failed.
+
+## Applying pods.
+Usualy you don't need to aply pods manualy, but if you want to run some kind of check and you need to know if it succeeded without retries then you can use pod with `restartPolicy: Never`. Only pods with this policy are currently supported. They are treated as jobs, so applying waits for them to finish and fails if they fail.
