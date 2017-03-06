@@ -18,14 +18,14 @@ persistent volume claim and stateful set.
 Just run `kubepy-apply-all` from a directory where all of you kubernetes definition yml files are.
 
 Options:
-* --directory <path> - uses path instead of local directory.
+* `--directory <path>` - uses path instead of local directory.
   Can be used multiple times to add new and partialy override existing definitions.
-* --build-tag <tag> - sets tag to all images without specified tag in your definition files
-* --replace - if present, replaces deployments instead of updating them. Default: false.
-* --host-volume <name>=<path> Adds host volume to each pod definition. Can be used multiple times.
-* --env <VAR>=value Sets environment vatiable on every container.
+* `--build-tag <tag>` - sets tag to all images without specified tag in your definition files
+* `--replace` - if present, replaces deployments instead of updating them. Default: false.
+* `--host-volume <name>=<path>` Adds host volume to each pod definition. Can be used multiple times.
+* `--env <VAR>=value` Sets environment vatiable on every container.
 
 There is also `kubepy-apply-one` command which is called as `kubepy-apply-one name1 [name2 ...]`
 It applies only files selected files. Names should be without ".yml".
 It accepts all options from `kubepy-apply-all`. Additionaly you can pass option:
-* --show-definition - shows definition instead of applying them.
+* `--show-definition` - shows definition instead of applying them.
