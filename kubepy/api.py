@@ -2,12 +2,14 @@ import subprocess
 
 import sys
 import yaml
+import tenacity
 
 
 class ApiError(Exception):
     pass
 
 
+@tenacity.retry(reraise=True, retry=tenacity.retry_if_exception_type(ApiError), stop=tenacity.stop_after_attempt(3))
 def get(kind, name=None):
     command = ['kubectl', 'get', '-o', 'yaml', kind]
     if name:
