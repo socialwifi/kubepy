@@ -24,6 +24,8 @@ Options:
 * `--replace` - if present, replaces deployments instead of updating them. Default: false.
 * `--host-volume <name>=<path>` Adds host volume to each pod definition. Can be used multiple times.
 * `--env <VAR>=value` Sets environment vatiable on every container.
+* `--max-job-retries <n>` While waiting for job to finish if it fails n times than delete job and fail.
+  Job sometimes can still be executed more than n times.
 
 There is also `kubepy-apply-one` command which is called as `kubepy-apply-one name1 [name2 ...]`
 It applies only files selected files. Names should be without ".yml".

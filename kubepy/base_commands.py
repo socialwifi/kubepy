@@ -42,6 +42,10 @@ def add_container_options(parser):
         '--env', dest='environment', default={}, action='callback', type='string',
         callback=parse_dict_options_callback,
         help='add environment variable to containers. Format is VAR=value  (--env=BUILD_NUMBER=2')
+    parser.add_option(
+        '--max-job-retries', dest='max_job_retries', default=None, action='store', type='int',
+        help='When applying job fail if job fails n times.'
+    )
 
 
 def parse_dict_options_callback(option, opt_str, value, parser):

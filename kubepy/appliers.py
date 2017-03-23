@@ -115,8 +115,10 @@ class BaseJobApplier(BaseDefinitionApplier):
             api.delete(self.definition_type, self.name)
 
     def _get_status(self):
-        return self.status_class(self.name, api.get(self.definition_type, self.name)['status'])
+        return self.status_class(self.name, self._get_raw_status())
 
+    def _get_raw_status(self):
+        return api.get(self.definition_type, self.name)['status']
 
     @property
     def new_definition(self):
@@ -148,11 +150,18 @@ class BaseJobStatus:
 
 
 class JobStatus(BaseJobStatus):
+    def __init__(self, definition_name, status, max_retires=None):
+        super().__init__(definition_name, status)
+        self.max_retries = max_retires
+
     def raise_if_failed(self):
         if 'conditions' in self.status:
             condition = self.status['conditions'][0]
             if condition['type'] == 'Failed':
                 self._raise_for_failed_condition(condition)
+        failures = self.status.get('failed', 0)
+        if self.max_retries and failures > self.max_retries:
+            raise JobError('Job failed {} times.'.format(failures))
 
     def _raise_for_failed_condition(self, condition):
         if condition['reason'] == 'DeadlineExceeded':
@@ -165,7 +174,7 @@ class JobStatus(BaseJobStatus):
         return 'completionTime' in self.status
 
 
-ContainerInfo = collections.namedtuple('ContainerInfo',['name', 'state'])
+ContainerInfo = collections.namedtuple('ContainerInfo', ['name', 'state'])
 
 
 class PodStatus(BaseJobStatus):
@@ -200,6 +209,9 @@ class JobApplier(BaseJobApplier):
     definition_type = 'Job'
     usable_with = [definition_type]
     status_class = JobStatus
+
+    def _get_status(self):
+        return self.status_class(self.name, self._get_raw_status(), self.options.max_job_retries)
 
 
 class PodApplier(BaseJobApplier):
