@@ -1,7 +1,5 @@
 import sys
 
-from kubepy import definition_transformers
-
 
 class CommandError(Exception):
     def __init__(self, message):
@@ -25,29 +23,3 @@ class BaseCommand:
 
     def get_optparser(self):
         raise NotImplementedError
-
-
-def add_container_options(parser):
-    parser.add_option(
-        '--build-tag', dest='build_tag', action='store', default='latest',
-        help='used image tag and name suffix')
-    parser.add_option(
-        '--replace', dest='replace', action='store_true', default=False,
-        help='delete and recreate deployments instead of doing rolling update')
-    parser.add_option(
-        '--host-volume', dest='host_volumes', default={}, action='callback', type='string',
-        callback=parse_dict_options_callback,
-        help='add host volume to pods. Format is name=path  (--host-volume=dev-volume=/home')
-    parser.add_option(
-        '--env', dest='environment', default={}, action='callback', type='string',
-        callback=parse_dict_options_callback,
-        help='add environment variable to containers. Format is VAR=value  (--env=BUILD_NUMBER=2')
-    parser.add_option(
-        '--max-job-retries', dest='max_job_retries', default=None, action='store', type='int',
-        help='When applying job fail if job fails n times.'
-    )
-
-
-def parse_dict_options_callback(option, opt_str, value, parser):
-    name, path = value.split('=', 1)
-    getattr(parser.values, option.dest)[name] = path
