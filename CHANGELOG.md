@@ -4,7 +4,7 @@ Changelog for kubepy
 1.6.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Added tenacity to kubectl get command.
 
 
 1.6.0 (2017-02-27)
