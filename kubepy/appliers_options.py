@@ -46,7 +46,8 @@ class Options:
     def add_applier_options(cls, parser):
         default_options = cls()
         for option, option_kwargs in cls.PARSER_CONFIGURATION:
-            parser.add_option(option, default=getattr(default_options, option), **option_kwargs)
+            attribute = option_kwargs['dest']
+            parser.add_option(option, default=getattr(default_options, attribute), **option_kwargs)
 
     @classmethod
     def from_parsed_options(cls, parsed_options):
