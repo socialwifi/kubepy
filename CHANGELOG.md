@@ -1,7 +1,7 @@
 Changelog for kubepy
 =================
 
-1.7.1 (unreleased)
+1.7.1 (2017-03-24)
 ------------------
 
 - Fix Adding command line options.
