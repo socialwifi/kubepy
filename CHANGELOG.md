@@ -5,6 +5,7 @@ Changelog for kubepy
 ------------------
 
 - Added tenacity to kubectl get command.
+- Added --max-job-retries option to fail after job failed too many times.
 
 
 1.6.0 (2017-02-27)

@@ -5,6 +5,7 @@ import pathlib
 import yaml
 
 from kubepy import appliers
+from kubepy import appliers_options
 from kubepy import base_commands
 
 
@@ -24,13 +25,13 @@ class ApplyOneCommand(base_commands.BaseCommand):
         parser.add_option(
             '--show-definition', dest='show_definition', action='store_true', default=False,
             help='shows definition instead of applying them.')
-        base_commands.add_container_options(parser)
+        appliers_options.Options.add_applier_options(parser)
         return parser
 
     def handle(self, args, options):
         directory_strings = options.directories or ['.']
         directories = [pathlib.Path(directory_string).resolve() for directory_string in directory_strings]
-        runner = appliers.DirectoriesApplier(directories, options)
+        runner = appliers.DirectoriesApplier(directories, appliers_options.Options.from_parsed_options(options))
         if args:
             for job_name in args:
                 if options.show_definition:
