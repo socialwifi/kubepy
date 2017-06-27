@@ -14,7 +14,7 @@ Requires python 3.5 and configured kubectl. To install run:
 ## Usage
 You can use this package to install all yml definitions from given directory.
 Supported kinds are deployment, service, secret, job, storage class, persistent volume,
-persistent volume claim and stateful set.
+persistent volume claim, stateful set and ingress.
 Just run `kubepy-apply-all` from a directory where all of you kubernetes definition yml files are.
 
 Options:
