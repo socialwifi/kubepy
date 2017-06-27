@@ -1,7 +1,7 @@
 Changelog for kubepy
 =================
 
-1.7.2 (unreleased)
+1.8.0 (2017-06-27)
 ------------------
 
 - Support ingress resource.
