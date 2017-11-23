@@ -4,7 +4,7 @@ Changelog for kubepy
 1.8.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Support PodDisruptionBudget resource.
 
 
 1.8.0 (2017-06-27)

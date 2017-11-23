@@ -26,6 +26,7 @@ Supported Kubernetes resources:
 * StorageClass
 * PersistentVolume
 * PersistentVolumeClaim
+* PodDisruptionBudget
 
 Options:
 * `--directory <path>` - uses path instead of local directory.

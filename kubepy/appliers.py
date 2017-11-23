@@ -80,7 +80,7 @@ class BaseDefinitionApplier:
 
 class ResourceApplier(BaseDefinitionApplier):
     usable_with = ['Service', 'Secret', 'StorageClass', 'PersistentVolume',
-                   'PersistentVolumeClaim', 'Ingress']
+                   'PersistentVolumeClaim', 'Ingress', 'PodDisruptionBudget']
 
     def apply(self):
         api.apply(self.definition)
