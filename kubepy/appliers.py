@@ -273,4 +273,5 @@ def transform_pod_definition(definition, options):
     new_definition = definition_transformers.tag_untaged_images(new_definition, options.build_tag)
     new_definition = definition_transformers.set_environment(new_definition, options.environment)
     new_definition = definition_transformers.add_host_volumes(new_definition, options.host_volumes)
+    new_definition = definition_transformers.add_labels(new_definition, options.labels)
     return new_definition

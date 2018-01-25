@@ -324,6 +324,101 @@ class TestAddHostVolumes:
         } in new_volumes
 
 
+class TestAddLabels:
+    def test_if_label_is_set(self):
+        definition = {
+            'kind': 'Deployment',
+            'spec': {
+                'template': {
+                    'spec': {
+                        'containers': [
+                            {
+                                'name': 'nginx-container',
+                                'image': 'nginx',
+                            },
+                        ],
+                    },
+                },
+            },
+        }
+        labels = {
+            'app': 'nginx',
+        }
+
+        new_definition = definition_transformers.add_labels(definition, labels=labels)
+
+        new_metadata = new_definition['spec']['template']['metadata']
+        assert 'labels' in new_metadata
+        assert new_metadata['labels'] == {
+            'app': 'nginx',
+        }
+
+    def test_if_multiple_labels_are_set(self):
+        definition = {
+            'kind': 'Deployment',
+            'spec': {
+                'template': {
+                    'spec': {
+                        'containers': [
+                            {
+                                'name': 'nginx-container',
+                                'image': 'nginx',
+                            },
+                        ],
+                    },
+                },
+            },
+        }
+        labels = {
+            'app': 'nginx',
+            'tier': 'frontend',
+        }
+
+        new_definition = definition_transformers.add_labels(definition, labels=labels)
+
+        new_labels = new_definition['spec']['template']['metadata']['labels']
+        assert new_labels == {
+            'app': 'nginx',
+            'tier': 'frontend',
+        }
+
+    def test_with_existing_labels(self):
+        definition = {
+            'kind': 'Deployment',
+            'spec': {
+                'template': {
+                    'metadata': {
+                        'labels': {
+                            'app': 'nginx',
+                            'tier': 'frontend',
+                        }
+                    },
+                    'spec': {
+                        'containers': [
+                            {
+                                'name': 'nginx-container',
+                                'image': 'nginx',
+                            },
+                        ],
+                    },
+                },
+            },
+        }
+        labels = {
+            'tier': 'backend',
+            'track': 'canary',
+        }
+
+        new_definition = definition_transformers.add_labels(definition, labels=labels)
+
+        new_labels = new_definition['spec']['template']['metadata']['labels']
+        assert new_labels == {
+            'app': 'nginx',
+            'tier': 'backend',
+            'track': 'canary',
+        }
+
+
 class TestIterateContainerDefinitions:
     def test_if_works_for_job(self):
         definition = {

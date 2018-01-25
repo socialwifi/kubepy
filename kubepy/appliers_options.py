@@ -8,6 +8,13 @@ class Options:
         ('--build-tag', {
             'dest': 'build_tag', 'action': 'store', 'help': 'used image tag and name suffix'
         }),
+        ('--label', {
+            'dest': 'labels',
+            'action': 'callback',
+            'type': 'string',
+            'callback': parse_dict_options_callback,
+            'help': 'add label to each pod definition. Format is key=value. Can be used multiple times.'
+        }),
         ('--replace', {
             'dest': 'replace',
             'action': 'store_true',
@@ -35,8 +42,9 @@ class Options:
         }),
     ]
 
-    def __init__(self, *, build_tag='latest', replace=False, host_volumes=None, environment=None, max_job_retries=None):
+    def __init__(self, *, build_tag='latest', labels=None, replace=False, host_volumes=None, environment=None, max_job_retries=None):
         self.build_tag = build_tag
+        self.labels = labels or {}
         self.replace = replace
         self.host_volumes = host_volumes or {}
         self.environment = environment or {}
