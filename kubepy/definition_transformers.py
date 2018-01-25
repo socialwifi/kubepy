@@ -33,6 +33,16 @@ def add_host_volumes(definition, host_volumes):
     return new_definition
 
 
+def add_labels(definition, labels):
+    new_definition = copy.deepcopy(definition)
+    for name, value in labels.items():
+        metadata = get_crawler(new_definition).get_pod_metadata_definition()
+        labels = metadata.get('labels', {})
+        labels[name] = value
+        metadata['labels'] = labels
+    return new_definition
+
+
 def get_crawler(definition):
     return CRAWLER_CLASS_MAP[definition['kind']](definition)
 
@@ -47,7 +57,13 @@ class BaseCrawler:
     def get_volume_definitions(self):
         return self.get_pod_spec().setdefault('volumes', [])
 
+    def get_pod_metadata_definition(self):
+        return self.get_pod_metadata()
+
     def get_pod_spec(self):
+        raise NotImplementedError
+
+    def get_pod_metadata(self):
         raise NotImplementedError
 
 
@@ -55,15 +71,19 @@ class DefinitionWithPodTemplateCrawler(BaseCrawler):
     def get_pod_spec(self):
         return self.get_pod_crawler().get_pod_spec()
 
+    def get_pod_metadata(self):
+        return self.get_pod_crawler().get_pod_metadata()
+
     def get_pod_crawler(self):
         return PodCrawler(self.definition['spec']['template'])
 
 
 class PodCrawler(BaseCrawler):
-
-
     def get_pod_spec(self):
         return self.definition['spec']
+
+    def get_pod_metadata(self):
+        return self.definition.setdefault('metadata', {})
 
 
 def tag_untaged_image(image, tag):
