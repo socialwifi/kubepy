@@ -1,0 +1,11 @@
+language: python
+python:
+  - 3.5
+  - 3.6
+install:
+  - pip install -r base_requirements.txt
+  - pip install -U pytest==3.0.5 pytest-cov coveralls
+script:
+  - python -m pytest --cov .
+after_success:
+  - coveralls

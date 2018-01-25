@@ -10,8 +10,10 @@ setup(
     author='Jakub Skiepko',
     author_email='it@socialwifi.com',
     url='https://github.com/socialwifi/kubepy',
-    packages=find_packages(),
+    packages=find_packages(exclude=['tests']),
     install_requires=[str(ir.req) for ir in parse_requirements('base_requirements.txt', session=False)],
+    setup_requires=['pytest-runner'],
+    tests_require=['pytest'],
     entry_points={
         'console_scripts': [
             'kubepy-apply-all = kubepy.commands.apply_all:run',
