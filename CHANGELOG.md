@@ -4,7 +4,7 @@ Changelog for kubepy
 1.9.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Added `--label` option to add labels to each pod.
 
 
 1.9.0 (2017-11-23)
