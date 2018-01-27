@@ -32,7 +32,8 @@ Options:
 * `--directory <path>` - uses path instead of local directory.
   Can be used multiple times to add new and partially override existing definitions.
 * `--build-tag <tag>` - sets tag to all images without specified tag in your definition files
-* `--label <key>=<value>` - adds label to each pod definition. Can be used multiple times.
+* `--label <key>=<value>` - adds label to definition. Can be used multiple times.
+* `--label-pod <key>=<value>` - adds label to each pod definition. Can be used multiple times.
 * `--annotate <key>=<value>` - adds annotation to definition. Can be used multiple times.
 * `--annotate-pod <key>=<value>` - adds annotation to each pod definition. Can be used multiple times.
 * `--replace` - if present, replaces deployments instead of updating them. Default: false.
