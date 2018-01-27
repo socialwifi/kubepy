@@ -15,6 +15,20 @@ class Options:
             'callback': parse_dict_options_callback,
             'help': 'add label to each pod definition. Format is key=value. Can be used multiple times.'
         }),
+        ('--annotate', {
+            'dest': 'annotations',
+            'action': 'callback',
+            'type': 'string',
+            'callback': parse_dict_options_callback,
+            'help': 'add annotation to definition. Format is key=value. Can be used multiple times.'
+        }),
+        ('--annotate-pod', {
+            'dest': 'pod_annotations',
+            'action': 'callback',
+            'type': 'string',
+            'callback': parse_dict_options_callback,
+            'help': 'add annotation to each pod definition. Format is key=value. Can be used multiple times.'
+        }),
         ('--replace', {
             'dest': 'replace',
             'action': 'store_true',
@@ -42,9 +56,12 @@ class Options:
         }),
     ]
 
-    def __init__(self, *, build_tag='latest', labels=None, replace=False, host_volumes=None, environment=None, max_job_retries=None):
+    def __init__(self, *, build_tag='latest', labels=None, annotations=None, pod_annotations=None,
+                 replace=False, host_volumes=None, environment=None, max_job_retries=None):
         self.build_tag = build_tag
         self.labels = labels or {}
+        self.annotations = annotations or {}
+        self.pod_annotations = pod_annotations or {}
         self.replace = replace
         self.host_volumes = host_volumes or {}
         self.environment = environment or {}
