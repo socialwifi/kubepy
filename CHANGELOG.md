@@ -1,8 +1,8 @@
 Changelog for kubepy
 =================
 
-1.9.1 (unreleased)
-------------------
+1.10.0 (2018-01-27)
+-------------------
 
 - Added `--annotate` and `--annotate-pod` options for adding annotations.
 - Added `--label` and `--label-pod` options to add labels to each pod.
