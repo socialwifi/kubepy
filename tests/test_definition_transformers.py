@@ -419,6 +419,170 @@ class TestAddLabels:
         }
 
 
+class TestAddAnnotations:
+    def test_if_annotation_is_set(self):
+        definition = {
+            'kind': 'Deployment',
+            'spec': {
+                'template': {
+                    'spec': {
+                        'containers': [
+                            {
+                                'name': 'nginx-container',
+                                'image': 'nginx',
+                            },
+                        ],
+                    },
+                },
+            },
+        }
+        annotations = {
+            'job-url': 'https://jenkins.example.com/build',
+        }
+
+        new_definition = definition_transformers.add_annotations(
+            definition, annotations=annotations, pod_annotations={})
+
+        assert 'metadata' in new_definition
+        assert 'annotations' in new_definition['metadata']
+        new_annotations = new_definition['metadata']['annotations']
+        assert new_annotations == {
+            'job-url': 'https://jenkins.example.com/build',
+        }
+
+    def test_if_pod_annotation_is_set(self):
+        definition = {
+            'kind': 'Deployment',
+            'spec': {
+                'template': {
+                    'spec': {
+                        'containers': [
+                            {
+                                'name': 'nginx-container',
+                                'image': 'nginx',
+                            },
+                        ],
+                    },
+                },
+            },
+        }
+        pod_annotations = {
+            'build-url': 'https://jenkins.example.com/build/1',
+        }
+
+        new_definition = definition_transformers.add_annotations(
+            definition, annotations={}, pod_annotations=pod_annotations)
+
+        new_pod_template = new_definition['spec']['template']
+        assert 'metadata' in new_pod_template
+        assert 'annotations' in new_pod_template['metadata']
+        new_annotations = new_pod_template['metadata']['annotations']
+        assert new_annotations == {
+            'build-url': 'https://jenkins.example.com/build/1',
+        }
+
+    def test_if_multiple_annotations_are_set(self):
+        definition = {
+            'kind': 'Deployment',
+            'spec': {
+                'template': {
+                    'spec': {
+                        'containers': [
+                            {
+                                'name': 'nginx-container',
+                                'image': 'nginx',
+                            },
+                        ],
+                    },
+                },
+            },
+        }
+        annotations = {
+            'job-url': 'https://jenkins.example.com/build',
+            'builder': 'jenkins',
+        }
+
+        new_definition = definition_transformers.add_annotations(
+            definition, annotations=annotations, pod_annotations={})
+
+        new_annotations = new_definition['metadata']['annotations']
+        assert new_annotations == {
+            'job-url': 'https://jenkins.example.com/build',
+            'builder': 'jenkins',
+        }
+
+    def test_with_existing_annotations(self):
+        definition = {
+            'kind': 'Deployment',
+            'metadata': {
+                'annotations': {
+                    'job-url': 'https://jenkins.example.com/build',
+                    'builder': 'not-set',
+                }
+            },
+            'spec': {
+                'template': {
+                    'spec': {
+                        'containers': [
+                            {
+                                'name': 'nginx-container',
+                                'image': 'nginx',
+                            },
+                        ],
+                    },
+                },
+            },
+        }
+        annotations = {
+            'builder': 'jenkins',
+            'build-date': '2017-12-12',
+        }
+
+        new_definition = definition_transformers.add_annotations(
+            definition, annotations=annotations, pod_annotations={})
+
+        new_annotations = new_definition['metadata']['annotations']
+        assert new_annotations == {
+            'job-url': 'https://jenkins.example.com/build',
+            'builder': 'jenkins',
+            'build-date': '2017-12-12',
+        }
+
+    def test_when_using_both_annotations_on_a_pod(self):
+        definition = {
+            'kind': 'Pod',
+            'metadata': {
+                'annotations': {
+                    'builder': 'jenkins',
+                }
+            },
+            'spec': {
+                'containers': [
+                    {
+                        'name': 'nginx-container',
+                        'image': 'nginx',
+                    },
+                ],
+            },
+        }
+        annotations = {
+            'job-url': 'https://jenkins.example.com/build',
+        }
+        pod_annotations = {
+            'build-date': '2017-12-12',
+        }
+
+        new_definition = definition_transformers.add_annotations(
+            definition, annotations=annotations, pod_annotations=pod_annotations)
+
+        new_annotations = new_definition['metadata']['annotations']
+        assert new_annotations == {
+            'builder': 'jenkins',
+            'job-url': 'https://jenkins.example.com/build',
+            'build-date': '2017-12-12',
+        }
+
+
 class TestIterateContainerDefinitions:
     def test_if_works_for_job(self):
         definition = {

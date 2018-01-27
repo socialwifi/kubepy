@@ -43,6 +43,21 @@ def add_labels(definition, labels):
     return new_definition
 
 
+def add_annotations(definition, annotations, pod_annotations):
+    new_definition = copy.deepcopy(definition)
+    crawler = get_crawler(new_definition)
+    add_annotations_to_metadata(metadata=crawler.get_metadata_definition(), annotations=annotations)
+    add_annotations_to_metadata(metadata=crawler.get_pod_metadata_definition(), annotations=pod_annotations)
+    return new_definition
+
+
+def add_annotations_to_metadata(metadata, annotations):
+    new_annotations = metadata.get('annotations', {})
+    for name, value in annotations.items():
+        new_annotations[name] = value
+    metadata['annotations'] = new_annotations
+
+
 def get_crawler(definition):
     return CRAWLER_CLASS_MAP[definition['kind']](definition)
 
@@ -56,6 +71,9 @@ class BaseCrawler:
 
     def get_volume_definitions(self):
         return self.get_pod_spec().setdefault('volumes', [])
+
+    def get_metadata_definition(self):
+        return self.definition.setdefault('metadata', {})
 
     def get_pod_metadata_definition(self):
         return self.get_pod_metadata()
