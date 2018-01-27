@@ -13,6 +13,13 @@ class Options:
             'action': 'callback',
             'type': 'string',
             'callback': parse_dict_options_callback,
+            'help': 'add label to definition. Format is key=value. Can be used multiple times.'
+        }),
+        ('--label-pod', {
+            'dest': 'pod_labels',
+            'action': 'callback',
+            'type': 'string',
+            'callback': parse_dict_options_callback,
             'help': 'add label to each pod definition. Format is key=value. Can be used multiple times.'
         }),
         ('--annotate', {
@@ -56,10 +63,11 @@ class Options:
         }),
     ]
 
-    def __init__(self, *, build_tag='latest', labels=None, annotations=None, pod_annotations=None,
+    def __init__(self, *, build_tag='latest', labels=None, pod_labels=None, annotations=None, pod_annotations=None,
                  replace=False, host_volumes=None, environment=None, max_job_retries=None):
         self.build_tag = build_tag
         self.labels = labels or {}
+        self.pod_labels = pod_labels or {}
         self.annotations = annotations or {}
         self.pod_annotations = pod_annotations or {}
         self.replace = replace

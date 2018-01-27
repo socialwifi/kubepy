@@ -345,7 +345,35 @@ class TestAddLabels:
             'app': 'nginx',
         }
 
-        new_definition = definition_transformers.add_labels(definition, labels=labels)
+        new_definition = definition_transformers.add_labels(definition, labels=labels, pod_labels={})
+
+        assert 'metadata' in new_definition
+        assert 'labels' in new_definition['metadata']
+        assert new_definition['metadata']['labels'] == {
+            'app': 'nginx',
+        }
+
+    def test_if_pod_label_is_set(self):
+        definition = {
+            'kind': 'Deployment',
+            'spec': {
+                'template': {
+                    'spec': {
+                        'containers': [
+                            {
+                                'name': 'nginx-container',
+                                'image': 'nginx',
+                            },
+                        ],
+                    },
+                },
+            },
+        }
+        pod_labels = {
+            'app': 'nginx',
+        }
+
+        new_definition = definition_transformers.add_labels(definition, labels={}, pod_labels=pod_labels)
 
         new_metadata = new_definition['spec']['template']['metadata']
         assert 'labels' in new_metadata
@@ -369,12 +397,12 @@ class TestAddLabels:
                 },
             },
         }
-        labels = {
+        pod_labels = {
             'app': 'nginx',
             'tier': 'frontend',
         }
 
-        new_definition = definition_transformers.add_labels(definition, labels=labels)
+        new_definition = definition_transformers.add_labels(definition, labels={}, pod_labels=pod_labels)
 
         new_labels = new_definition['spec']['template']['metadata']['labels']
         assert new_labels == {
@@ -404,12 +432,12 @@ class TestAddLabels:
                 },
             },
         }
-        labels = {
+        pod_labels = {
             'tier': 'backend',
             'track': 'canary',
         }
 
-        new_definition = definition_transformers.add_labels(definition, labels=labels)
+        new_definition = definition_transformers.add_labels(definition, labels={}, pod_labels=pod_labels)
 
         new_labels = new_definition['spec']['template']['metadata']['labels']
         assert new_labels == {

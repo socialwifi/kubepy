@@ -33,14 +33,19 @@ def add_host_volumes(definition, host_volumes):
     return new_definition
 
 
-def add_labels(definition, labels):
+def add_labels(definition, labels, pod_labels):
     new_definition = copy.deepcopy(definition)
-    for name, value in labels.items():
-        metadata = get_crawler(new_definition).get_pod_metadata_definition()
-        labels = metadata.get('labels', {})
-        labels[name] = value
-        metadata['labels'] = labels
+    crawler = get_crawler(new_definition)
+    add_labels_to_metadata(metadata=crawler.get_metadata_definition(), labels=labels)
+    add_labels_to_metadata(metadata=crawler.get_pod_metadata_definition(), labels=pod_labels)
     return new_definition
+
+
+def add_labels_to_metadata(metadata, labels):
+    new_labels = metadata.get('labels', {})
+    for name, value in labels.items():
+        new_labels[name] = value
+    metadata['labels'] = new_labels
 
 
 def add_annotations(definition, annotations, pod_annotations):
