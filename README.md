@@ -16,6 +16,7 @@ You can use this package to install all yml definitions from given directory.
 Just run `kubepy-apply-all` from a directory where all of you Kubernetes definition yml files are.
 
 Supported Kubernetes resources:
+* CronJob
 * Deployment
 * StatefulSet
 * Job
