@@ -1,7 +1,7 @@
 Changelog for kubepy
 =================
 
-1.10.1 (unreleased)
+1.11.0 (2018-03-29)
 -------------------
 
 - Support CronJob resource.
