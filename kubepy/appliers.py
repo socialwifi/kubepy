@@ -79,7 +79,7 @@ class BaseDefinitionApplier:
 
 
 class ResourceApplier(BaseDefinitionApplier):
-    usable_with = ['Service', 'Secret', 'StorageClass', 'PersistentVolume',
+    usable_with = ['CronJob', 'Service', 'Secret', 'StorageClass', 'PersistentVolume',
                    'PersistentVolumeClaim', 'Ingress', 'PodDisruptionBudget']
 
     def apply(self):
