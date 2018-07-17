@@ -1,3 +1,4 @@
+from collections import abc
 import itertools
 import functools
 
@@ -22,7 +23,7 @@ def merge_lists(*definitions):
     named_results = {}
     unmerged_results = []
     for definition in itertools.chain(*definitions):
-        if hasattr(definition, '__getitem__') and 'name' in definition:
+        if isinstance(definition, abc.Mapping) and 'name' in definition:
             name = definition['name']
             if name in named_results:
                 named_results[name].append(definition)
