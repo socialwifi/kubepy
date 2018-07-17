@@ -1,10 +1,10 @@
 Changelog for kubepy
 =================
 
-1.11.1 (unreleased)
+1.11.1 (2018-07-17)
 -------------------
 
-- Nothing changed yet.
+- Fix merging definitions.
 
 
 1.11.0 (2018-03-29)
