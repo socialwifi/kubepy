@@ -46,7 +46,7 @@ def apply(definition):
 
 def replace(definition):
     run_command_with_yaml_on_stdin(
-        ['kubectl', 'replace', '--force', '--cascade', '--record', '-f', '-'], definition)
+        ['kubectl', 'replace', '--force', '--cascade', '-f', '-'], definition)
 
 
 def rolling_update(definition, name):
