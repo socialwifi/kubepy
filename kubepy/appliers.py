@@ -79,7 +79,7 @@ class BaseDefinitionApplier:
 
 
 class ResourceApplier(BaseDefinitionApplier):
-    usable_with = ['CronJob', 'Service', 'Secret', 'StorageClass', 'PersistentVolume',
+    usable_with = ['Service', 'Secret', 'StorageClass', 'PersistentVolume',
                    'PersistentVolumeClaim', 'Ingress', 'PodDisruptionBudget']
 
     def apply(self):
@@ -94,6 +94,17 @@ class ReplicatedTemplateResourceApplier(BaseDefinitionApplier):
             api.replace(self.new_definition)
         else:
             api.apply(self.new_definition)
+
+    @property
+    def new_definition(self):
+        return transform_pod_definition(self.definition, self.options)
+
+
+class CronJobApplier(BaseDefinitionApplier):
+    usable_with = ['CronJob']
+
+    def apply(self):
+        api.apply(self.new_definition)
 
     @property
     def new_definition(self):
@@ -226,7 +237,7 @@ class PodApplier(BaseJobApplier):
 
 
 class UniversalDefinitionApplier(BaseDefinitionApplier):
-    applier_classes = (ResourceApplier, ReplicatedTemplateResourceApplier, JobApplier, PodApplier)
+    applier_classes = (ResourceApplier, ReplicatedTemplateResourceApplier, CronJobApplier, JobApplier, PodApplier)
     usable_with = sum((applier.usable_with for applier in applier_classes), [])
 
     def apply(self):

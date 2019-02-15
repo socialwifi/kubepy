@@ -90,6 +90,17 @@ class BaseCrawler:
         raise NotImplementedError
 
 
+class CronJobCrawler(BaseCrawler):
+    def get_pod_spec(self):
+        return self.get_job_crawler().get_pod_spec()
+
+    def get_pod_metadata(self):
+        return self.get_job_crawler().get_pod_metadata()
+
+    def get_job_crawler(self):
+        return DefinitionWithPodTemplateCrawler(self.definition['spec']['jobTemplate'])
+
+
 class DefinitionWithPodTemplateCrawler(BaseCrawler):
     def get_pod_spec(self):
         return self.get_pod_crawler().get_pod_spec()
@@ -118,6 +129,7 @@ def tag_untaged_image(image, tag):
 
 CRAWLER_CLASS_MAP = {
     'Job': DefinitionWithPodTemplateCrawler,
+    'CronJob': CronJobCrawler,
     'Deployment': DefinitionWithPodTemplateCrawler,
     'StatefulSet': DefinitionWithPodTemplateCrawler,
     'Pod': PodCrawler,
