@@ -6,10 +6,17 @@ from setuptools import find_packages
 from setuptools import setup
 
 
+def get_long_description():
+    with open('README.md') as readme_file:
+        return readme_file.read()
+
+
 setup(
     name='kubepy',
     version='1.12.1.dev0',
     description='Python wrapper on kubectl that makes deploying easy.',
+    long_description=get_long_description(),
+    long_description_content_type='text/markdown',
     author='Social WiFi',
     author_email='it@socialwifi.com',
     url='https://github.com/socialwifi/kubepy',
