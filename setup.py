@@ -10,7 +10,7 @@ setup(
     name='kubepy',
     version='1.12.1.dev0',
     description='Python wrapper on kubectl that makes deploying easy.',
-    author='Jakub Skiepko',
+    author='Social WiFi',
     author_email='it@socialwifi.com',
     url='https://github.com/socialwifi/kubepy',
     packages=find_packages(exclude=['tests']),
