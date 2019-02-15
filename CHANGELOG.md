@@ -5,6 +5,7 @@ Changelog for kubepy
 -------------------
 
 - Improve support for CronJob resource.
+- Support pip >= 10.
 
 
 1.11.1 (2018-07-17)
