@@ -8,7 +8,7 @@ from setuptools import setup
 
 setup(
     name='kubepy',
-    version='1.12.0',
+    version='1.12.1.dev0',
     description='Python wrapper on kubectl that makes deploying easy.',
     author='Jakub Skiepko',
     author_email='it@socialwifi.com',
