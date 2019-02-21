@@ -1,6 +1,7 @@
-from collections import abc
-import itertools
 import functools
+import itertools
+
+from collections import abc
 
 
 @functools.singledispatch
