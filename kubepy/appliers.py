@@ -1,8 +1,6 @@
-import copy
-
-import time
-
 import collections
+import copy
+import time
 
 from kubepy import api
 from kubepy import definition_manager
@@ -32,6 +30,8 @@ class DeadlineExceeded(JobError):
 def directory_applier(path, options):
     manager = definition_manager.DefinitionManager(path)
     return DefinitionsApplier(manager, options)
+
+
 DirectoryApplier = directory_applier
 
 
@@ -40,6 +40,8 @@ def directories_applier(paths, options):
         *(definition_manager.DefinitionManager(path) for path in paths)
     )
     return DefinitionsApplier(manager, options)
+
+
 DirectoriesApplier = directories_applier
 
 
@@ -195,7 +197,6 @@ class PodStatus(BaseJobStatus):
                 if container.state['terminated']['reason'] != 'Completed':
                     self.raise_with_log(container.name)
 
-
     @property
     def succeeded(self):
         for container in self.containers:
@@ -263,8 +264,6 @@ class UniversalDefinitionApplier(BaseDefinitionApplier):
             raise InstallError('Unknown resource kind: {}'.format(kind))
         else:
             return applier_class(self.definition, self.options)
-
-
 
 
 class UniqueDictException(Exception):
