@@ -1,8 +1,8 @@
 import collections
 import contextlib
+import itertools
 import pathlib
 
-import itertools
 import yaml
 
 from kubepy import definition_merger
