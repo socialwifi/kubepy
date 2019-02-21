@@ -2,6 +2,7 @@
 
 import optparse
 import pathlib
+
 import yaml
 
 from kubepy import appliers
@@ -44,6 +45,7 @@ class ApplyOneCommand(base_commands.BaseCommand):
 
 def run():
     ApplyOneCommand().run()
+
 
 if __name__ == '__main__':
     run()
