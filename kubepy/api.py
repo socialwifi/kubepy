@@ -1,8 +1,8 @@
 import subprocess
-
 import sys
-import yaml
+
 import tenacity
+import yaml
 
 
 class ApiError(Exception):
