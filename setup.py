@@ -1,6 +1,11 @@
-from pip.req import parse_requirements
 from setuptools import find_packages
 from setuptools import setup
+
+
+def parse_requirements(filename):
+    """ load requirements from a pip requirements file """
+    lineiter = (line.strip() for line in open(filename))
+    return [line for line in lineiter if line and not line.startswith("#")]
 
 
 setup(
@@ -11,7 +16,7 @@ setup(
     author_email='it@socialwifi.com',
     url='https://github.com/socialwifi/kubepy',
     packages=find_packages(exclude=['tests']),
-    install_requires=[str(ir.req) for ir in parse_requirements('base_requirements.txt', session=False)],
+    install_requires=parse_requirements('base_requirements.txt'),
     setup_requires=['pytest-runner'],
     tests_require=['pytest'],
     entry_points={
