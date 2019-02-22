@@ -1,10 +1,23 @@
 Changelog for kubepy
 =================
 
-1.11.2 (unreleased)
+1.12.2 (unreleased)
 -------------------
 
 - Nothing changed yet.
+
+
+1.12.1 (2019-02-15)
+-------------------
+
+- Minor packaging improvements.
+
+
+1.12.0 (2019-02-15)
+-------------------
+
+- Improve support for CronJob resource.
+- Support pip >= 10.
 
 
 1.11.1 (2018-07-17)

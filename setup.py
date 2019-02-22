@@ -1,22 +1,27 @@
+try:
+    from pip._internal.req import parse_requirements
+except ImportError:
+    from pip.req import parse_requirements
 from setuptools import find_packages
 from setuptools import setup
 
 
-def parse_requirements(filename):
-    """ load requirements from a pip requirements file """
-    lineiter = (line.strip() for line in open(filename))
-    return [line for line in lineiter if line and not line.startswith("#")]
+def get_long_description():
+    with open('README.md') as readme_file:
+        return readme_file.read()
 
 
 setup(
     name='kubepy',
-    version='1.11.2.dev0',
+    version='1.12.2.dev0',
     description='Python wrapper on kubectl that makes deploying easy.',
-    author='Jakub Skiepko',
+    long_description=get_long_description(),
+    long_description_content_type='text/markdown',
+    author='Social WiFi',
     author_email='it@socialwifi.com',
     url='https://github.com/socialwifi/kubepy',
     packages=find_packages(exclude=['tests']),
-    install_requires=parse_requirements('base_requirements.txt'),
+    install_requires=[str(ir.req) for ir in parse_requirements('base_requirements.txt', session=False)],
     setup_requires=['pytest-runner'],
     tests_require=['pytest'],
     entry_points={
