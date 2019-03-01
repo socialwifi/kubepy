@@ -1,7 +1,7 @@
 Changelog for kubepy
 =================
 
-1.13.0 (unreleased)
+1.13.0 (2019-03-01)
 -------------------
 
 - Removed deprecated `--record` flag when using `replace` command.
