@@ -17,11 +17,14 @@ class InstallAllCommand(base_commands.BaseCommand):
     def get_optparser(self):
         parser = optparse.OptionParser(
             usage="usage: %prog [options] [name ...]",
-            epilog="Apply definitions from given directory."
+            epilog="Apply definitions from given directory.",
         )
         parser.add_option(
-            '--directory', dest='directories', action='append',
-            help='installs definitions from this directory, can be defined multiple times to override definitions.')
+            '--directory',
+            dest='directories',
+            action='append',
+            help='installs definitions from this directory, can be defined multiple times to override definitions.',
+        )
         appliers_options.Options.add_applier_options(parser)
         return parser
 

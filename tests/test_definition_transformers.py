@@ -197,7 +197,7 @@ class TestSetEnvironment:
                                 'env': [{
                                     'name': 'DEBUG',
                                     'value': 'false',
-                                }]
+                                }],
                             },
                         ],
                     },
@@ -234,7 +234,7 @@ class TestSetEnvironment:
                                 'env': [{
                                     'name': 'DEBUG',
                                     'value': 'false',
-                                }]
+                                }],
                             },
                         ],
                     },
@@ -419,7 +419,7 @@ class TestAddLabels:
                         'labels': {
                             'app': 'nginx',
                             'tier': 'frontend',
-                        }
+                        },
                     },
                     'spec': {
                         'containers': [
@@ -546,7 +546,7 @@ class TestAddAnnotations:
                 'annotations': {
                     'job-url': 'https://jenkins.example.com/build',
                     'builder': 'not-set',
-                }
+                },
             },
             'spec': {
                 'template': {
@@ -582,7 +582,7 @@ class TestAddAnnotations:
             'metadata': {
                 'annotations': {
                     'builder': 'jenkins',
-                }
+                },
             },
             'spec': {
                 'containers': [
