@@ -37,7 +37,7 @@ DirectoryApplier = directory_applier
 
 def directories_applier(paths, options):
     manager = definition_manager.OverridenDefinitionManager(
-        *(definition_manager.DefinitionManager(path) for path in paths)
+        *(definition_manager.DefinitionManager(path) for path in paths),
     )
     return DefinitionsApplier(manager, options)
 
