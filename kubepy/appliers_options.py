@@ -6,60 +6,60 @@ def parse_dict_options_callback(option, opt_str, value, parser):
 class Options:
     PARSER_CONFIGURATION = [
         ('--build-tag', {
-            'dest': 'build_tag', 'action': 'store', 'help': 'used image tag and name suffix'
+            'dest': 'build_tag', 'action': 'store', 'help': 'used image tag and name suffix',
         }),
         ('--label', {
             'dest': 'labels',
             'action': 'callback',
             'type': 'string',
             'callback': parse_dict_options_callback,
-            'help': 'add label to definition. Format is key=value. Can be used multiple times.'
+            'help': 'add label to definition. Format is key=value. Can be used multiple times.',
         }),
         ('--label-pod', {
             'dest': 'pod_labels',
             'action': 'callback',
             'type': 'string',
             'callback': parse_dict_options_callback,
-            'help': 'add label to each pod definition. Format is key=value. Can be used multiple times.'
+            'help': 'add label to each pod definition. Format is key=value. Can be used multiple times.',
         }),
         ('--annotate', {
             'dest': 'annotations',
             'action': 'callback',
             'type': 'string',
             'callback': parse_dict_options_callback,
-            'help': 'add annotation to definition. Format is key=value. Can be used multiple times.'
+            'help': 'add annotation to definition. Format is key=value. Can be used multiple times.',
         }),
         ('--annotate-pod', {
             'dest': 'pod_annotations',
             'action': 'callback',
             'type': 'string',
             'callback': parse_dict_options_callback,
-            'help': 'add annotation to each pod definition. Format is key=value. Can be used multiple times.'
+            'help': 'add annotation to each pod definition. Format is key=value. Can be used multiple times.',
         }),
         ('--replace', {
             'dest': 'replace',
             'action': 'store_true',
-            'help': 'delete and recreate deployments instead of doing rolling update'
+            'help': 'delete and recreate deployments instead of doing rolling update',
         }),
         ('--host-volume', {
             'dest': 'host_volumes',
             'action': 'callback',
             'type': 'string',
             'callback': parse_dict_options_callback,
-            'help': 'add host volume to pods. Format is name=path  (--host-volume=dev-volume=/home)'
+            'help': 'add host volume to pods. Format is name=path  (--host-volume=dev-volume=/home)',
         }),
         ('--env', {
             'dest': 'environment',
             'action': 'callback',
             'type': 'string',
             'callback': parse_dict_options_callback,
-            'help': 'add environment variable to containers. Format is VAR=value  (--env=BUILD_NUMBER=2)'
+            'help': 'add environment variable to containers. Format is VAR=value  (--env=BUILD_NUMBER=2)',
         }),
         ('--max-job-retries', {
             'dest': 'max_job_retries',
             'action': 'store',
             'type': 'int',
-            'help': 'When applying job fail if job fails n times.'
+            'help': 'When applying job fail if job fails n times.',
         }),
     ]
 

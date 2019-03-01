@@ -18,14 +18,21 @@ class ApplyOneCommand(base_commands.BaseCommand):
     def get_optparser(self):
         parser = optparse.OptionParser(
             usage="usage: %prog [options] [job_name ...]",
-            epilog="Installs or Executes selected definition"
+            epilog="Installs or Executes selected definition",
         )
         parser.add_option(
-            '--directory', dest='directories', action='append',
-            help='installs definitions from this directory, can be defined multiple times to override definitions.')
+            '--directory',
+            dest='directories',
+            action='append',
+            help='installs definitions from this directory, can be defined multiple times to override definitions.',
+        )
         parser.add_option(
-            '--show-definition', dest='show_definition', action='store_true', default=False,
-            help='shows definition instead of applying them.')
+            '--show-definition',
+            dest='show_definition',
+            action='store_true',
+            default=False,
+            help='shows definition instead of applying them.',
+        )
         appliers_options.Options.add_applier_options(parser)
         return parser
 
