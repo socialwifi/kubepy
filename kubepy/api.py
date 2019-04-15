@@ -16,7 +16,7 @@ def get(kind, name=None):
         command.append(name)
     get_process = subprocess.Popen(
         command, stdout=subprocess.PIPE, stderr=sys.stderr)
-    objects = yaml.load(get_process.stdout)
+    objects = yaml.safe_load(get_process.stdout)
     if get_process.wait() != 0:
         raise ApiError
     return objects

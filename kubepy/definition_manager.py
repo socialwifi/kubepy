@@ -59,4 +59,4 @@ class DefinitionManager(BaseDefinitionManager):
 
     def get_yaml_from_file(self, path):
         with path.open() as yaml_file:
-            return yaml.load(yaml_file)
+            return yaml.safe_load(yaml_file)
