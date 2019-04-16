@@ -1,7 +1,7 @@
 Changelog for kubepy
 =================
 
-1.13.1 (unreleased)
+1.13.1 (2019-04-16)
 -------------------
 
 - Fix YAMLLoadWarning: https://msg.pyyaml.org/load
