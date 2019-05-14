@@ -1,10 +1,13 @@
 import collections
 import copy
+import logging
 import time
 
 from kubepy import api
 from kubepy import definition_manager
 from kubepy import definition_transformers
+
+logger = logging.getLogger(__name__)
 
 
 class InstallError(Exception):
@@ -174,7 +177,25 @@ class JobStatus(BaseJobStatus):
                 self._raise_for_failed_condition(condition)
         failures = self.status.get('failed', 0)
         if self.max_retries and failures > self.max_retries:
+            failed_pod = self.get_job_pod()
+            if failed_pod:
+                stdout, stderr = self.get_failed_pod_logs(failed_pod)
+            else:
+                stdout, stderr = '', ''
+            for line in str(stdout).split('\\n'):
+                print('STDOUT:\t', line)
+            for line in str(stderr).split('\\n'):
+                print('STDERR:\t', line)
             raise JobError('Job failed {} times.'.format(failures))
+
+    def get_failed_pod_logs(self, failed_pod):
+        for init_container_status in failed_pod['status'].get('initContainerStatuses', []):
+            if init_container_status['state'].get('terminated', {}).get('reason') == 'ContainerCannotRun':
+                return 'Init container failed!', init_container_status['state']['terminated']['message']
+        for container_status in failed_pod['status'].get('containerStatuses', []):
+            if container_status ['state'].get('terminated', {}).get('reason') == 'ContainerCannotRun':
+                return 'Container failed!', container_status['state']['terminated']['message']
+        return api.logs(failed_pod['metadata']['name'])
 
     def _raise_for_failed_condition(self, condition):
         if condition['reason'] == 'DeadlineExceeded':
@@ -185,6 +206,15 @@ class JobStatus(BaseJobStatus):
     @property
     def succeeded(self):
         return 'completionTime' in self.status
+
+    def get_job_pod(self):
+        pods = api.get_failed_pod_for_job(self.definition_name)['items']
+        if not pods:
+            logging.warning('No pod found for job {}!'.format(self.definition_name))
+            return
+        elif len(pods) > 1:
+            logging.info('More than one pod found for job {}, returning first.'.format(self.definition_name))
+        return pods[0]
 
 
 ContainerInfo = collections.namedtuple('ContainerInfo', ['name', 'state'])
