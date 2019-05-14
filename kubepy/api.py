@@ -22,6 +22,20 @@ def get(kind, name=None):
     return objects
 
 
+def get_failed_pod_for_job(job_name):
+    command = [
+        'kubectl', 'get', 'pod',
+        '-o', 'yaml',
+        '--field-selector', 'status.phase=Failed',
+        '-l', 'job-name={}'.format(job_name),
+    ]
+    get_process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=sys.stderr)
+    objects = yaml.safe_load(get_process.stdout)
+    if get_process.wait() != 0:
+        raise ApiError
+    return objects
+
+
 def logs(pod_name, container_name=None):
     command = ['kubectl', 'logs', pod_name]
     if container_name:
