@@ -38,13 +38,10 @@ def get(kind, name=None, namespace=None):
     return objects
 
 
-def get_failed_pod_for_job(job_name):
-    command = [
-        'kubectl', 'get', 'pod',
-        '-o', 'yaml',
-        '--field-selector', 'status.phase=Failed',
-        '-l', 'job-name={}'.format(job_name),
-    ]
+def get_failed_pod_for_job(job_name, namespace=None):
+    command = kubectl_command_builder('get', resource='pod', namespace=namespace,
+                                      flags=['-o', 'yaml''--field-selector', 'status.phase=Failed', '-l',
+                                             'job-name={}'.format(job_name)])
     get_process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=sys.stderr)
     objects = yaml.safe_load(get_process.stdout)
     if get_process.wait() != 0:

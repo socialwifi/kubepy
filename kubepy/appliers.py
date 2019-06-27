@@ -155,9 +155,10 @@ class BaseJobApplier(BaseDefinitionApplier):
 
 
 class BaseJobStatus:
-    def __init__(self, definition_name, status):
+    def __init__(self, definition_name, status, namespace=None):
         self.definition_name = definition_name
         self.status = status
+        self.namespace = namespace
 
     def raise_if_failed(self):
         raise NotImplementedError
@@ -167,8 +168,8 @@ class BaseJobStatus:
 
 
 class JobStatus(BaseJobStatus):
-    def __init__(self, definition_name, status, max_retires=None):
-        super().__init__(definition_name, status)
+    def __init__(self, definition_name, status, max_retires=0, namespace=None):
+        super().__init__(definition_name, status, namespace)
         self.max_retries = max_retires
 
     def raise_if_failed(self):
@@ -177,7 +178,7 @@ class JobStatus(BaseJobStatus):
             if condition['type'] == 'Failed':
                 self._raise_for_failed_condition(condition)
         failures = self.status.get('failed', 0)
-        if self.max_retries and failures > self.max_retries:
+        if failures > self.max_retries:
             failed_pod = self.get_job_pod()
             if failed_pod:
                 stdout = self.get_failed_pod_logs(failed_pod)
@@ -191,7 +192,9 @@ class JobStatus(BaseJobStatus):
         for container_status in failed_pod['status'].get('containerStatuses', []):
             if container_status['state'].get('terminated', {}).get('reason') == 'ContainerCannotRun':
                 return 'Container failed! ' + str(container_status['state']['terminated']['message'])
-        return api.logs(failed_pod['metadata']['name'])[0].decode()
+        name = failed_pod['metadata']['name']
+        namespace = failed_pod['metadata'].get('namespace')
+        return api.logs(name, namespace=namespace)[0].decode()
 
     def _raise_for_failed_condition(self, condition):
         if condition['reason'] == 'DeadlineExceeded':
@@ -204,7 +207,7 @@ class JobStatus(BaseJobStatus):
         return 'completionTime' in self.status
 
     def get_job_pod(self):
-        pods = api.get_failed_pod_for_job(self.definition_name)['items']
+        pods = api.get_failed_pod_for_job(self.definition_name, namespace=self.namespace)['items']
         if not pods:
             logging.warning('No pod found for job {}!'.format(self.definition_name))
             return
@@ -249,7 +252,7 @@ class JobApplier(BaseJobApplier):
     status_class = JobStatus
 
     def _get_status(self):
-        return self.status_class(self.name, self._get_raw_status(), self.options.max_job_retries)
+        return self.status_class(self.name, self._get_raw_status(), self.options.max_job_retries, namespace=self.namespace)
 
 
 class PodApplier(BaseJobApplier):
