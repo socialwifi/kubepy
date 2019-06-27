@@ -1,7 +1,7 @@
 Changelog for kubepy
 =================
 
-1.13.2 (unreleased)
+1.14.0 (2019-06-27)
 -------------------
 
 - Display logs for failed Jobs.
