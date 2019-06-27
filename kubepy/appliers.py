@@ -67,9 +67,10 @@ class DefinitionsApplier:
 
 
 class BaseDefinitionApplier:
-    def __init__(self, definition, options):
+    def __init__(self, definition, options, namespace=None):
         self.definition = definition
         self.options = options
+        self.namespace = namespace
 
     def apply(self):
         raise NotImplementedError
@@ -88,7 +89,7 @@ class ResourceApplier(BaseDefinitionApplier):
                    'PersistentVolumeClaim', 'Ingress', 'PodDisruptionBudget']
 
     def apply(self):
-        api.apply(self.definition)
+        api.apply(self.definition, namespace=self.namespace)
 
 
 class ReplicatedTemplateResourceApplier(BaseDefinitionApplier):
@@ -96,9 +97,9 @@ class ReplicatedTemplateResourceApplier(BaseDefinitionApplier):
 
     def apply(self):
         if self.options.replace:
-            api.replace(self.new_definition)
+            api.replace(self.new_definition, namespace=self.namespace)
         else:
-            api.apply(self.new_definition)
+            api.apply(self.new_definition, namespace=self.namespace)
 
     @property
     def new_definition(self):
@@ -109,7 +110,7 @@ class CronJobApplier(BaseDefinitionApplier):
     usable_with = ['CronJob']
 
     def apply(self):
-        api.apply(self.new_definition)
+        api.apply(self.new_definition, namespace=self.namespace)
 
     @property
     def new_definition(self):
@@ -118,7 +119,7 @@ class CronJobApplier(BaseDefinitionApplier):
 
 class BaseJobApplier(BaseDefinitionApplier):
     def apply(self):
-        api.create(self.new_definition)
+        api.create(self.new_definition, namespace=self.namespace)
         try:
             while True:
                 status = self._get_status()
@@ -128,13 +129,13 @@ class BaseJobApplier(BaseDefinitionApplier):
                 else:
                     time.sleep(1)
         finally:
-            api.delete(self.definition_type, self.name)
+            api.delete(self.definition_type, self.name, namespace=self.namespace)
 
     def _get_status(self):
         return self.status_class(self.name, self._get_raw_status())
 
     def _get_raw_status(self):
-        return api.get(self.definition_type, self.name)['status']
+        return api.get(self.definition_type, self.name, namespace=self.namespace)['status']
 
     @property
     def new_definition(self):
@@ -283,12 +284,13 @@ class UniversalDefinitionApplier(BaseDefinitionApplier):
 
     def get_applier(self):
         kind = self.definition['kind']
+        namespace = self.definition['metadata'].get('namespace')
         try:
             applier_class = self.kind_map[kind]
         except KeyError:
             raise InstallError('Unknown resource kind: {}'.format(kind))
         else:
-            return applier_class(self.definition, self.options)
+            return applier_class(self.definition, self.options, namespace=namespace)
 
 
 class UniqueDictException(Exception):
