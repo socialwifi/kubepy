@@ -54,7 +54,7 @@ def create(definition, namespace=None):
 
 
 def apply(definition, namespace=None):
-    command = kubectl_command_builder('apply', namespace=namespace, flags=['record'], with_definition=True)
+    command = kubectl_command_builder('apply', namespace=namespace, flags=['--record'], with_definition=True)
     run_command_with_yaml_on_stdin(command, definition)
 
 
