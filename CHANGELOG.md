@@ -1,7 +1,7 @@
 Changelog for kubepy
 =================
 
-1.14.1 (unreleased)
+1.15.0 (2019-07-01)
 -------------------
 
 - Support kubernetes namespaces.
