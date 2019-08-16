@@ -11,10 +11,13 @@ def merge_definitions(*definitions):
 
 @merge_definitions.register(dict)
 def merge_dicts(*definitions):
-    keys = set(itertools.chain(*(definition.keys() for definition in definitions)))
+    if definitions[-1] is None:
+        return None
+    keys = set(itertools.chain(*(definition.keys() for definition in definitions if definition is not None)))
     result = {}
     for key in keys:
-        result[key] = merge_definitions(*(definition[key] for definition in definitions if key in definition))
+        result[key] = merge_definitions(*(definition[key] for definition in definitions
+                                          if definition is not None and key in definition))
     return result
 
 
