@@ -1,7 +1,7 @@
 Changelog for kubepy
 =================
 
-1.15.2 (unreleased)
+1.16.0 (2019-11-07)
 -------------------
 
 - Enable unsetting dict type fields with null.
