@@ -1,6 +1,12 @@
 Changelog for kubepy
 =================
 
+1.16.1 (unreleased)
+-------------------
+
+- Nothing changed yet.
+
+
 1.16.0 (2019-11-07)
 -------------------
 
