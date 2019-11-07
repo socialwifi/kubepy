@@ -77,7 +77,7 @@ def replace(definition, namespace=None):
 
 def rolling_update(definition, name, namespace=None):
     command = kubectl_command_builder('rolling-update', name=name, namespace=namespace, with_definition=True)
-    run_command_with_yaml_on_stdin(command,definition)
+    run_command_with_yaml_on_stdin(command, definition)
 
 
 def delete(kind, name, namespace=None):

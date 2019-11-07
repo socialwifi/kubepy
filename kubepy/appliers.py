@@ -85,7 +85,7 @@ class BaseDefinitionApplier:
 
 
 class ResourceApplier(BaseDefinitionApplier):
-    usable_with = ['Service', 'Secret', 'StorageClass', 'PersistentVolume',
+    usable_with = ['Service', 'Secret', 'ConfigMap', 'StorageClass', 'PersistentVolume',
                    'PersistentVolumeClaim', 'Ingress', 'PodDisruptionBudget']
 
     def apply(self):
@@ -252,7 +252,8 @@ class JobApplier(BaseJobApplier):
     status_class = JobStatus
 
     def _get_status(self):
-        return self.status_class(self.name, self._get_raw_status(), self.options.max_job_retries, namespace=self.namespace)
+        return self.status_class(self.name, self._get_raw_status(), self.options.max_job_retries,
+                                 namespace=self.namespace)
 
 
 class PodApplier(BaseJobApplier):
