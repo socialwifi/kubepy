@@ -4,7 +4,7 @@ Changelog for kubepy
 1.15.1 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Handle ConfigMap resource.
 
 
 1.15.0 (2019-07-01)
