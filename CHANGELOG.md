@@ -1,7 +1,7 @@
 Changelog for kubepy
 =================
 
-1.16.1 (unreleased)
+1.17.0 (2023-01-31)
 -------------------
 
 - Add support for CRDs related to Prometheus Operator.
