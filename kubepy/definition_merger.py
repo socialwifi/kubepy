@@ -16,9 +16,8 @@ def merge_dicts(*definitions):
     keys = set(itertools.chain(*(definition.keys() for definition in definitions if definition is not None)))
     result = {}
     for key in keys:
-        value = merge_definitions(
-            *(definition[key] for definition in definitions if definition is not None and key in definition)
-        )
+        value = merge_definitions(*(definition[key] for definition in definitions
+                                    if definition is not None and key in definition))
         if value is not None:
             result[key] = value
     return result
