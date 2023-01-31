@@ -4,7 +4,8 @@ Changelog for kubepy
 1.16.1 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Add support for CRDs related to Prometheus Operator.
+- Fix pip compatibility.
 
 
 1.16.0 (2019-11-07)

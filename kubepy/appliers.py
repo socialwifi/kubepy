@@ -85,11 +85,22 @@ class BaseDefinitionApplier:
 
 
 class ResourceApplier(BaseDefinitionApplier):
+    custom_resource_definitions = ['ServiceMonitor', 'PodMonitor', 'PrometheusRule', 'AlertmanagerConfig']
     usable_with = ['Service', 'Secret', 'ConfigMap', 'StorageClass', 'PersistentVolume',
-                   'PersistentVolumeClaim', 'Ingress', 'PodDisruptionBudget']
+                   'PersistentVolumeClaim', 'Ingress', 'PodDisruptionBudget',
+                   *custom_resource_definitions]
 
     def apply(self):
-        api.apply(self.definition, namespace=self.namespace)
+        try:
+            api.apply(self.definition, namespace=self.namespace)
+        except api.ApiError as e:
+            for crd in self.custom_resource_definitions:
+                if 'no matches for kind "{}"'.format(crd) in str(e):
+                    logger.warning('Custom Resource named "{}" not found! '
+                                   'Please install it first, skipping for now.'.format(crd))
+                    break
+            else:
+                raise
 
 
 class ReplicatedTemplateResourceApplier(BaseDefinitionApplier):
