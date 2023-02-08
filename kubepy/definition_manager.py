@@ -1,4 +1,4 @@
-import collections
+import collections.abc
 import contextlib
 import itertools
 import pathlib
@@ -8,7 +8,7 @@ import yaml
 from kubepy import definition_merger
 
 
-class BaseDefinitionManager(collections.Mapping):
+class BaseDefinitionManager(collections.abc.Mapping):
     def __len__(self):
         return len(list(self))
 
