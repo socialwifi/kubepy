@@ -1,7 +1,7 @@
 Changelog for kubepy
 =================
 
-1.17.1 (unreleased)
+1.18.0 (2023-02-08)
 -------------------
 
 - Update import for newer Python version.
