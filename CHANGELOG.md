@@ -4,7 +4,7 @@ Changelog for kubepy
 1.18.1 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Add support for ServiceAccount, Role, RoleBinding.
 
 
 1.18.0 (2023-02-08)
