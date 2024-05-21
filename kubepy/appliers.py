@@ -298,7 +298,10 @@ class UniversalDefinitionApplier(BaseDefinitionApplier):
         return self.get_applier().new_definition
 
     def get_applier(self):
-        kind = self.definition['kind']
+        try:
+            kind = self.definition['kind']
+        except KeyError:
+            raise InstallError('Cannot find resource kind in definition: {}'.format(self.definition))
         namespace = self.definition['metadata'].get('namespace')
         try:
             applier_class = self.kind_map[kind]
