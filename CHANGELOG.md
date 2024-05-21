@@ -1,10 +1,12 @@
 Changelog for kubepy
 =================
 
-## 1.19.1 (unreleased)
+## 1.20.0 (unreleased)
 ----------------------
 
-- Nothing changed yet.
+- Add support for HorizontalPodAutoscaler.
+- Run tests with tox and GitHub Actions.
+- Drop support for Python 3.7 and 3.8, add support for Python 3.12.
 
 
 ## 1.19.0 (2023-09-06)
