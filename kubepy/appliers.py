@@ -88,6 +88,7 @@ class ResourceApplier(BaseDefinitionApplier):
     custom_resource_definitions = ['ServiceMonitor', 'PodMonitor', 'PrometheusRule', 'AlertmanagerConfig']
     usable_with = ['Service', 'Secret', 'ConfigMap', 'StorageClass', 'PersistentVolume',
                    'PersistentVolumeClaim', 'Ingress', 'PodDisruptionBudget', 'ServiceAccount', 'Role', 'RoleBinding',
+                   'HorizontalPodAutoscaler',
                    *custom_resource_definitions]
 
     def apply(self):
