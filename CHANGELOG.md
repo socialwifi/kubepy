@@ -1,7 +1,7 @@
 Changelog for kubepy
 =================
 
-## 1.20.0 (unreleased)
+## 1.20.0 (2024-05-21)
 ----------------------
 
 - Add support for HorizontalPodAutoscaler.
