@@ -1,10 +1,12 @@
 Changelog for kubepy
 =================
 
-## 1.20.1 (unreleased)
+## 1.21.0 (unreleased)
 ----------------------
 
-- Nothing changed yet.
+- Add `--namespace` option, used when a definition does not set `metadata.namespace` itself.
+- Allow skipping definitions in `DefinitionsApplier.apply_all` with a `skip` predicate.
+- Add `DefinitionsApplier.definitions_to_skip` to let callers report the definitions a `skip` predicate excluded.
 
 
 ## 1.20.0 (2024-05-21)
