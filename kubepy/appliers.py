@@ -144,7 +144,7 @@ class BaseJobApplier(BaseDefinitionApplier):
             api.delete(self.definition_type, self.name, namespace=self.namespace)
 
     def _get_status(self):
-        return self.status_class(self.name, self._get_raw_status())
+        return self.status_class(self.name, self._get_raw_status(), namespace=self.namespace)
 
     def _get_raw_status(self):
         return api.get(self.definition_type, self.name, namespace=self.namespace)['status']
@@ -254,7 +254,7 @@ class PodStatus(BaseJobStatus):
             yield ContainerInfo(container_status['name'], container_status['state'])
 
     def raise_with_log(self, container_name):
-        stdout, stderr = api.logs(self.definition_name, container_name)
+        stdout, stderr = api.logs(self.definition_name, container_name, namespace=self.namespace)
         raise PodError('Failure in {}'.format(container_name), container_name, stdout, stderr)
 
 
@@ -303,7 +303,7 @@ class UniversalDefinitionApplier(BaseDefinitionApplier):
             kind = self.definition['kind']
         except KeyError:
             raise InstallError('Cannot find resource kind in definition: {}'.format(self.definition))
-        namespace = self.definition['metadata'].get('namespace')
+        namespace = self.definition['metadata'].get('namespace') or self.options.namespace
         try:
             applier_class = self.kind_map[kind]
         except KeyError:

@@ -42,6 +42,7 @@ Options:
 * `--env <VAR>=value` Sets environment variable on every container.
 * `--max-job-retries <n>` While waiting for job to finish if it fails n times than delete job and fail.
   Job sometimes can still be executed more than n times.
+* `--namespace <name>` - applies definitions into this namespace, unless the definition sets `metadata.namespace` itself.
 
 There is also `kubepy-apply-one` command which is called as `kubepy-apply-one name1 [name2 ...]`
 It applies only files selected files. Names should be without ".yml".
