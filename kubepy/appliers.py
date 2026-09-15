@@ -53,9 +53,22 @@ class DefinitionsApplier:
         self.options = options
         self.manager = manager
 
-    def apply_all(self):
-        for definition in self.manager.values():
+    def apply_all(self, skip=None):
+        for definition in self.definitions_to_apply(skip):
             UniversalDefinitionApplier(definition, self.options).apply()
+
+    def definitions_to_apply(self, skip=None):
+        for definition in self.manager.values():
+            if skip is not None and skip(definition):
+                logger.info('Skipping {}/{}'.format(
+                    definition.get('kind'), definition.get('metadata', {}).get('name')))
+                continue
+            yield definition
+
+    def definitions_to_skip(self, skip):
+        for definition in self.manager.values():
+            if skip(definition):
+                yield definition
 
     def apply_named(self, name):
         definition = self.manager[name]
