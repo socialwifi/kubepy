@@ -53,9 +53,22 @@ class DefinitionsApplier:
         self.options = options
         self.manager = manager
 
-    def apply_all(self):
-        for definition in self.manager.values():
+    def apply_all(self, skip=None):
+        for definition in self.definitions_to_apply(skip):
             UniversalDefinitionApplier(definition, self.options).apply()
+
+    def definitions_to_apply(self, skip=None):
+        for definition in self.manager.values():
+            if skip is not None and skip(definition):
+                logger.info('Skipping {}/{}'.format(
+                    definition.get('kind'), definition.get('metadata', {}).get('name')))
+                continue
+            yield definition
+
+    def definitions_to_skip(self, skip):
+        for definition in self.manager.values():
+            if skip(definition):
+                yield definition
 
     def apply_named(self, name):
         definition = self.manager[name]
@@ -144,7 +157,7 @@ class BaseJobApplier(BaseDefinitionApplier):
             api.delete(self.definition_type, self.name, namespace=self.namespace)
 
     def _get_status(self):
-        return self.status_class(self.name, self._get_raw_status())
+        return self.status_class(self.name, self._get_raw_status(), namespace=self.namespace)
 
     def _get_raw_status(self):
         return api.get(self.definition_type, self.name, namespace=self.namespace)['status']
@@ -254,7 +267,7 @@ class PodStatus(BaseJobStatus):
             yield ContainerInfo(container_status['name'], container_status['state'])
 
     def raise_with_log(self, container_name):
-        stdout, stderr = api.logs(self.definition_name, container_name)
+        stdout, stderr = api.logs(self.definition_name, container_name, namespace=self.namespace)
         raise PodError('Failure in {}'.format(container_name), container_name, stdout, stderr)
 
 
@@ -303,7 +316,7 @@ class UniversalDefinitionApplier(BaseDefinitionApplier):
             kind = self.definition['kind']
         except KeyError:
             raise InstallError('Cannot find resource kind in definition: {}'.format(self.definition))
-        namespace = self.definition['metadata'].get('namespace')
+        namespace = self.definition['metadata'].get('namespace') or self.options.namespace
         try:
             applier_class = self.kind_map[kind]
         except KeyError:

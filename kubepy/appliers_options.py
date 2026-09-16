@@ -61,10 +61,16 @@ class Options:
             'type': 'int',
             'help': 'When applying job fail if job fails n times.',
         }),
+        ('--namespace', {
+            'dest': 'namespace',
+            'action': 'store',
+            'help': 'namespace to apply definitions into, '
+                    'unless the definition specifies metadata.namespace itself.',
+        }),
     ]
 
     def __init__(self, *, build_tag='latest', labels=None, pod_labels=None, annotations=None, pod_annotations=None,
-                 replace=False, host_volumes=None, environment=None, max_job_retries=None):
+                 replace=False, host_volumes=None, environment=None, max_job_retries=None, namespace=None):
         self.build_tag = build_tag
         self.labels = labels or {}
         self.pod_labels = pod_labels or {}
@@ -74,6 +80,7 @@ class Options:
         self.host_volumes = host_volumes or {}
         self.environment = environment or {}
         self.max_job_retries = max_job_retries
+        self.namespace = namespace
 
     @classmethod
     def add_applier_options(cls, parser):
