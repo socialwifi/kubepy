@@ -15,7 +15,7 @@ def get_long_description():
 
 setup(
     name='kubepy',
-    version='1.21.0.dev0',
+    version='1.21.0',
     description='Python wrapper on kubectl that makes deploying easy.',
     long_description=get_long_description(),
     long_description_content_type='text/markdown',

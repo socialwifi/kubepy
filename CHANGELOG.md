@@ -1,7 +1,7 @@
 Changelog for kubepy
 =================
 
-## 1.21.0 (unreleased)
+## 1.21.0 (2026-09-17)
 ----------------------
 
 - Add `--namespace` option, used when a definition does not set `metadata.namespace` itself.
